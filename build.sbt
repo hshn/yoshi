@@ -9,7 +9,7 @@ ThisBuild / description :=
   "A validation library for Scala 3 that parses untyped input into domain types"
 ThisBuild / versionScheme := Some("early-semver")
 
-ThisBuild / scalacOptions ++= Seq(
+ThisBuild / scalacOptions := Seq(
   "-encoding",
   "utf8",
   "-deprecation",
@@ -22,7 +22,7 @@ ThisBuild / testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
 
 val zio = "2.1.26"
 
-lazy val root = (project in file(".") withId "yoshi")
+lazy val root = (project in file(".")).withId("yoshi")
   .settings(
     Compile / unmanagedSourceDirectories   := Nil,
     Compile / unmanagedResourceDirectories := Nil,
@@ -35,9 +35,9 @@ lazy val root = (project in file(".") withId "yoshi")
     `zio-prelude`,
   )
 
-lazy val core = (project in file("core"))
+lazy val core = (project in file("core")).withId("yoshi-core")
   .settings(
-    name := "yoshi",
+    name := "yoshi-core",
     libraryDependencies ++= Seq(
       "dev.zio" %% "zio-test"          % zio % Test,
       "dev.zio" %% "zio-test-sbt"      % zio % Test,
@@ -45,7 +45,7 @@ lazy val core = (project in file("core"))
     ),
   )
 
-lazy val `zio-prelude` = (project in file("zio-prelude") withId "yoshi-zio-prelude")
+lazy val `zio-prelude` = (project in file("zio-prelude")).withId("yoshi-zio-prelude")
   .dependsOn(core % "test->test;compile->compile")
   .settings(
     name := "yoshi-zio-prelude",
@@ -54,8 +54,7 @@ lazy val `zio-prelude` = (project in file("zio-prelude") withId "yoshi-zio-prelu
     ),
   )
 
-lazy val docs = project
-  .in(file("docs"))
+lazy val docs = (project in file("docs")).withId("yoshi-docs")
   .dependsOn(core, `zio-prelude`)
   .enablePlugins(MdocPlugin, DocusaurusPlugin)
   .settings(
