@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.2.1](https://github.com/hshn/yoshi/compare/v0.2.0...v0.2.1) (2026-06-15)
+
+
+### Bug Fixes
+
+* deny core-js build script to unblock pnpm v11 install ([#147](https://github.com/hshn/yoshi/issues/147)) ([b54c50d](https://github.com/hshn/yoshi/commit/b54c50dc72d7e3bf831aa9006346bf50e07467d3))
+* **deps:** update docusaurus monorepo to v3.10.1 ([#130](https://github.com/hshn/yoshi/issues/130)) ([7c5ab55](https://github.com/hshn/yoshi/commit/7c5ab55feaaefec7866727ed054c98312324ea26))
+* stop forcing repo-wide ESM that breaks devbox corepack ([#146](https://github.com/hshn/yoshi/issues/146)) ([cde65e4](https://github.com/hshn/yoshi/commit/cde65e40be16ff213cd054ed44ed956ae7a8f149))
+* use yoshi-docs project id so docs build runs on sbt 2 ([#148](https://github.com/hshn/yoshi/issues/148)) ([cf0f758](https://github.com/hshn/yoshi/commit/cf0f758ef49fc752d21b543b0c43552479e8d0b9))
+
 ## [0.2.0](https://github.com/hshn/yoshi/compare/v0.1.0...v0.2.0) (2026-05-15)
 
 
