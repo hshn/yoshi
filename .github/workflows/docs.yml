@@ -28,7 +28,7 @@ jobs:
             ~/.sbt
           key: sbt-docs-${{ hashFiles('build.sbt', 'project/**') }}
       - run: devbox run -- pnpm install --frozen-lockfile --dir website
-      - run: devbox run -- sbt docs/mdoc
+      - run: devbox run -- sbt yoshi-docs/mdoc
       - run: devbox run -- pnpm run --dir website build
       - uses: actions/upload-pages-artifact@v5
         with:
