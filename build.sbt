@@ -61,7 +61,7 @@ lazy val docs = (project in file("docs")).withId("yoshi-docs")
     moduleName := "yoshi-docs",
     mdocIn := baseDirectory.value / "mdoc",
     mdocOut := (ThisBuild / baseDirectory).value / "website" / "docs",
-    mdocVariables := Map("VERSION" -> version.value),
+    mdocVariables := Map("VERSION" -> previousStableVersion.value.getOrElse(version.value)),
     scalacOptions -= "-Werror",
     publish / skip := true,
   )
