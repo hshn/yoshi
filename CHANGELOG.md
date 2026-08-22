@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.2](https://github.com/hshn/yoshi/compare/v0.2.1...v0.2.2) (2026-08-22)
+
+
+### Bug Fixes
+
+* **deps:** update docusaurus monorepo to v3.10.2 ([#167](https://github.com/hshn/yoshi/issues/167)) ([2109bd1](https://github.com/hshn/yoshi/commit/2109bd125b5874f264bc6440d0c7d6dd4e13975d))
+* **docs:** show latest stable release version instead of snapshot ([#153](https://github.com/hshn/yoshi/issues/153)) ([789f567](https://github.com/hshn/yoshi/commit/789f5677c089c98c230901b0dc8b11864564d23c))
+
 ## [0.2.1](https://github.com/hshn/yoshi/compare/v0.2.0...v0.2.1) (2026-06-15)
 
 
