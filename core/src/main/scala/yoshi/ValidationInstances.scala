@@ -38,17 +38,6 @@ trait ValidationInstances extends ValidationInstancesLowPriority {
 
 trait ValidationInstancesLowPriority extends ValidationInstancesLowestPriority {
 
-  /** Extracts the value an `Option[A]` holds, failing with the violation from [[Required]] when it is absent.
-    *
-    * Ranked above [[ValidationInstancesLowestPriority.optionCanBeValidatedAsRequired]] so that extracting a value keeps its type rather
-    * than being routed through a `Validation[V, A, A]` that happens to be in scope.
-    */
-  given requiredCanBeValidated[V, A](using required: Required[V]): Validation[V, Option[A], A] =
-    Validation.required(required.violation)
-}
-
-trait ValidationInstancesLowestPriority {
-
   /** Treats an `Option[A]` as a required value and validates what it holds into `B`: `None` fails with the violation from [[Required]],
     * `Some(a)` is validated by the `Validation[V, A, B]` in scope.
     *
@@ -60,4 +49,15 @@ trait ValidationInstancesLowestPriority {
     required: Required[V],
   ): Validation[V, Option[A], B] =
     Validation.required[V, A](required.violation) >> validation
+}
+
+trait ValidationInstancesLowestPriority {
+
+  /** Extracts the value an `Option[A]` holds, failing with the violation from [[Required]] when it is absent.
+    *
+    * Ranked below [[ValidationInstancesLowPriority.optionCanBeValidatedAsRequired]], so a `Validation[V, A, A]` in scope is still applied
+    * to the extracted value; this instance takes over only when there is none.
+    */
+  given requiredCanBeValidated[V, A](using required: Required[V]): Validation[V, Option[A], A] =
+    Validation.required(required.violation)
 }

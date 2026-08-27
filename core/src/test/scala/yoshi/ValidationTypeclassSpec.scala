@@ -54,6 +54,12 @@ object ValidationTypeclassSpec extends ZIOSpecDefault {
 
         assertTrue(v.run(Some("abc")).is(_.left) == Violations.of(Violation.NonIntegerString("abc")))
       }
+      test("apply the validation in scope even when it leaves the type unchanged") {
+        given Validation[Violation, String, String] = Validations.minLength(5)
+        val v                                       = summon[Validation[Violation, Option[String], String]]
+
+        assertTrue(v.run(Some("ab")).is(_.left) == Violations.of(Violation.TooShortString("ab", 5)))
+      }
       test("keep passing None through when the output type is an Option") {
         given Validation[Violation, String, Int] = Validations.parseInt
         val v                                    = summon[Validation[Violation, Option[String], Option[Int]]]
