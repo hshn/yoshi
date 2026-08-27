@@ -29,7 +29,7 @@ import scala.annotation.implicitNotFound
   "No given Required[${V}] was found, so the violation for an absent value is undefined. " +
     "Define `given Required[${V}]`, or import yoshi.defaults.* to use the built-in violation type.",
 )
-trait Required[V] {
+trait Required[+V] {
 
   /** The violation reported when the value is absent. */
   def violation: V

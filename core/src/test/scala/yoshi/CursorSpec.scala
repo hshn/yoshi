@@ -167,5 +167,27 @@ object CursorSpec extends ZIOSpecDefault {
         assertTrue(fieldResult == shorthandResult)
       }
     }
+    suiteAll("field carried through unchanged") {
+      test("combines with a field that is validated") {
+        val validation: Validation[Violation, CursorSpec.Passthrough, CursorSpec.Parsed] =
+          Validation.cursor[CursorSpec.Passthrough] { c =>
+            (
+              c.validateAs[String](_.id),
+              c.validateAs[Int](_.age),
+            ).validateN { case (id, age) =>
+              CursorSpec.Parsed(id, age)
+            }
+          }
+
+        for {
+          result <- validation.run(CursorSpec.Passthrough(id = "abc", age = "30"))
+        } yield {
+          assertTrue(result == CursorSpec.Parsed(id = "abc", age = 30))
+        }
+      }
+    }
   }
+
+  case class Passthrough(id: String, age: String)
+  case class Parsed(id: String, age: Int)
 }

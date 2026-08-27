@@ -79,7 +79,7 @@ object ValidationTypeclassSpec extends ZIOSpecDefault {
           assertTrue(result == None)
         }
       }
-      test("require each level of a nested Option separately") {
+      test("keep the outer level of a nested Option optional and demand the inner one") {
         val v = summon[Validation[Violation, Option[Option[String]], Option[Int]]]
 
         for {
@@ -101,6 +101,18 @@ object ValidationTypeclassSpec extends ZIOSpecDefault {
         } yield {
           assertTrue(result == "hello")
         }
+      }
+      test("keep working when the violation type is a union of the parts") {
+        final case class Missing()
+        final case class NotAnInt(value: String)
+
+        given Required[Missing]                 = Required(Missing())
+        given Validation[NotAnInt, String, Int] = Validation.parseInt(NotAnInt(_))
+
+        val v = summon[Validation[Missing | NotAnInt, Option[String], Int]]
+
+        assertTrue(v.run(None).is(_.left) == Violations.of(Missing())) &&
+        assertTrue(v.run(Some("x")).is(_.left) == Violations.of(NotAnInt("x")))
       }
       test("derive a container validation without a user-supplied instance") {
         val v = summon[Validation[Violation, Seq[String], Seq[String]]]

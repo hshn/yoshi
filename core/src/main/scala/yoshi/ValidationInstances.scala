@@ -57,7 +57,11 @@ trait ValidationInstancesLowestPriority {
     *
     * `Option[A]` to `A` and `Seq[A]` to `Seq[A]` fall out of the derivations above through this instance. A `Validation[V, A, A]` the
     * caller defines or imports is in lexical scope and takes precedence over this one, so it is still applied where it exists.
+    *
+    * The [[Required]] instance is what names the violation type. Nothing else in this instance mentions `V`, and `ValidatedAs` captures it
+    * in an invariant type member, so without it `.validateAs` on a pass-through field would widen the violation type to `Any` and fail to
+    * combine with the other fields of a [[Validation.cursor]].
     */
-  given valueCanBeValidatedAsItself[V, A]: Validation[V, A, A] =
+  given valueCanBeValidatedAsItself[V, A](using Required[V]): Validation[V, A, A] =
     Validation.succeed[A]
 }
