@@ -16,11 +16,11 @@ private[yoshi] trait NonEmptyChunkInstances { self: AssociativeBothInstances =>
     }
 
   implicit def chunkCanBeNonEmptyChunk[V, A, B](using
-    nonEmpty: Validation[V, Option[NonEmptyChunk[A]], NonEmptyChunk[A]],
-    element: Validation[V, A, B],
+    Validation[V, Option[NonEmptyChunk[A]], NonEmptyChunk[A]],
+    Validation[V, A, B],
   ): Validation[V, Chunk[A], NonEmptyChunk[B]] = Validation.instance[Chunk[A]] { chunk =>
     for {
-      as <- nonEmpty.run(NonEmptyChunk.fromIterableOption(chunk))
+      as <- NonEmptyChunk.fromIterableOption(chunk).validateAs[NonEmptyChunk[A]]
       bs <- as.validateAs[NonEmptyChunk[B]]
     } yield {
       bs

@@ -14,11 +14,11 @@ private[yoshi] trait NonEmptyListInstances { self: AssociativeBothInstances =>
     }
 
   implicit def listCanBeNonEmptyList[V, A, B](using
-    nonEmpty: Validation[V, Option[NonEmptyList[A]], NonEmptyList[A]],
-    element: Validation[V, A, B],
+    Validation[V, Option[NonEmptyList[A]], NonEmptyList[A]],
+    Validation[V, A, B],
   ): Validation[V, List[A], NonEmptyList[B]] = Validation.instance[List[A]] { list =>
     for {
-      as <- nonEmpty.run(NonEmptyList.fromIterableOption(list))
+      as <- NonEmptyList.fromIterableOption(list).validateAs[NonEmptyList[A]]
       bs <- as.validateAs[NonEmptyList[B]]
     } yield {
       bs

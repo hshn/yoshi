@@ -15,11 +15,11 @@ private[yoshi] trait NonEmptySetInstances { self: NonEmptyListInstances =>
   }
 
   implicit def setCanBeNonEmptySet[V, A, B](using
-    nonEmpty: Validation[V, Option[NonEmptySet[A]], NonEmptySet[A]],
-    element: Validation[V, A, B],
+    Validation[V, Option[NonEmptySet[A]], NonEmptySet[A]],
+    Validation[V, A, B],
   ): Validation[V, Set[A], NonEmptySet[B]] = Validation.instance[Set[A]] { set =>
     for {
-      as <- nonEmpty.run(NonEmptySet.fromIterableOption(set))
+      as <- NonEmptySet.fromIterableOption(set).validateAs[NonEmptySet[A]]
       bs <- as.validateAs[NonEmptySet[B]]
     } yield {
       bs
