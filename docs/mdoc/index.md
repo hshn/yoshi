@@ -120,6 +120,36 @@ summon[Validation[Violation, List[String], List[Int]]]
 summon[Validation[Violation, Map[String, String], Map[String, Int]]]
 ```
 
+## Required fields
+
+An `Option` input says the value may be absent. The type you validate it into says whether your domain accepts that:
+
+```scala mdoc:compile-only
+import yoshi.*
+import yoshi.defaults.*
+
+// Optional: None passes through
+summon[Validation[Violation, Option[String], Option[Int]]]
+
+// Required: None fails with Violation.Required
+summon[Validation[Violation, Option[String], Int]]
+```
+
+The violation to report for an absent value cannot be derived, since `Validation` does not know your violation type. `yoshi.defaults` supplies it for its own type; for a violation type of your own, define a single `Required` instance and the derivations above become available:
+
+```scala mdoc:compile-only
+import yoshi.*
+
+enum MyViolation:
+  case Missing
+  case NotAnInt(value: String)
+
+given Required[MyViolation] = Required(MyViolation.Missing)
+given Validation[MyViolation, String, Int] = Validation.parseInt(MyViolation.NotAnInt(_))
+
+summon[Validation[MyViolation, Option[String], Int]]
+```
+
 ## Composing validators
 
 ```scala mdoc:silent

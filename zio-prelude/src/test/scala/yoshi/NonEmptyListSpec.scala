@@ -26,6 +26,14 @@ object NonEmptyListSpec extends ZIOSpecDefault {
           assertTrue(result == NonEmptyList(42))
         }
       }
+      test("applies the element validation in scope even though the element type is unchanged") {
+        given Validation[Violation, Int, Int] = Validations.positive
+
+        assertTrue(
+          List(1, -2, 3).validateAs[NonEmptyList[Int]].is(_.left) ==
+            Violations[Violation](children = Map(Violations.Path(1) -> Violations(Vector(Violation.NonPositive(-2))))),
+        )
+      }
     }
     suiteAll("List → NonEmptyList (element transform)") {
       test("transforms all elements") {

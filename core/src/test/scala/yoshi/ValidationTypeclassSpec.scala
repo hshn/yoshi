@@ -34,6 +34,96 @@ object ValidationTypeclassSpec extends ZIOSpecDefault {
         assertTrue(v.run(Some("ab")).is(_.left) == Violations.of(Violation.TooShortString("ab", 5)))
       }
     }
+    suiteAll("optionCanBeValidatedAsRequired") {
+      test("validate the value an Option holds") {
+        val v = summon[Validation[Violation, Option[String], Int]]
+
+        for {
+          result <- v.run(Some("42"))
+        } yield {
+          assertTrue(result == 42)
+        }
+      }
+      test("fail with the Required violation on None") {
+        val v = summon[Validation[Violation, Option[String], Int]]
+
+        assertTrue(v.run(None).is(_.left) == Violations.of(Violation.Required))
+      }
+      test("extract the value an Option holds when no validation narrows it") {
+        val v = summon[Validation[Violation, Option[String], String]]
+
+        for {
+          result <- v.run(Some("hello"))
+        } yield {
+          assertTrue(result == "hello")
+        }
+      }
+      test("report the violation of the validation it delegates to") {
+        val v = summon[Validation[Violation, Option[String], Int]]
+
+        assertTrue(v.run(Some("abc")).is(_.left) == Violations.of(Violation.NonIntegerString("abc")))
+      }
+      test("apply the validation in scope even when it leaves the type unchanged") {
+        given Validation[Violation, String, String] = Validations.minLength(5)
+        val v                                       = summon[Validation[Violation, Option[String], String]]
+
+        assertTrue(v.run(Some("ab")).is(_.left) == Violations.of(Violation.TooShortString("ab", 5)))
+      }
+      test("keep passing None through when the output type is an Option") {
+        given Validation[Violation, String, Int] = Validations.parseInt
+        val v                                    = summon[Validation[Violation, Option[String], Option[Int]]]
+
+        for {
+          result <- v.run(None)
+        } yield {
+          assertTrue(result == None)
+        }
+      }
+      test("keep the outer level of a nested Option optional and demand the inner one") {
+        val v = summon[Validation[Violation, Option[Option[String]], Option[Int]]]
+
+        for {
+          absent  <- v.run(None)
+          present <- v.run(Some(Some("42")))
+        } yield {
+          assertTrue(absent == None) &&
+          assertTrue(present == Some(42)) &&
+          assertTrue(v.run(Some(None)).is(_.left) == Violations.of(Violation.Required))
+        }
+      }
+    }
+    suiteAll("valueCanBeValidatedAsItself") {
+      test("leave a value unchanged") {
+        val v = summon[Validation[Violation, String, String]]
+
+        for {
+          result <- v.run("hello")
+        } yield {
+          assertTrue(result == "hello")
+        }
+      }
+      test("keep working when the violation type is a union of the parts") {
+        final case class Missing()
+        final case class NotAnInt(value: String)
+
+        given Required[Missing]                 = Required(Missing())
+        given Validation[NotAnInt, String, Int] = Validation.parseInt(NotAnInt(_))
+
+        val v = summon[Validation[Missing | NotAnInt, Option[String], Int]]
+
+        assertTrue(v.run(None).is(_.left) == Violations.of(Missing())) &&
+        assertTrue(v.run(Some("x")).is(_.left) == Violations.of(NotAnInt("x")))
+      }
+      test("derive a container validation without a user-supplied instance") {
+        val v = summon[Validation[Violation, Seq[String], Seq[String]]]
+
+        for {
+          result <- v.run(Seq("a", "bb"))
+        } yield {
+          assertTrue(result == Seq("a", "bb"))
+        }
+      }
+    }
     suiteAll("seqCanBeValidatedAs") {
       test("validate all elements in Seq") {
         given Validation[Violation, String, String] = Validations.minLength(1)

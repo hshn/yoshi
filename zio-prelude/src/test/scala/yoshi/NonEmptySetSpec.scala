@@ -26,6 +26,16 @@ object NonEmptySetSpec extends ZIOSpecDefault {
           assertTrue(result == NonEmptySet(42))
         }
       }
+      test("applies the element validation in scope even though the element type is unchanged") {
+        given Validation[Violation, Int, Int] = Validations.positive
+
+        val Left(result) = Set(1, -2, 3).validateAs[NonEmptySet[Int]]: @unchecked
+        val violations   = result.toList.map(_._2)
+        assertTrue(
+          violations.length == 1,
+          violations.contains(Violation.NonPositive(-2)),
+        )
+      }
     }
     suiteAll("Set → NonEmptySet (element transform)") {
       test("transforms all elements") {

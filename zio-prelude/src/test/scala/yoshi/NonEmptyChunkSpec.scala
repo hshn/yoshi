@@ -27,6 +27,14 @@ object NonEmptyChunkSpec extends ZIOSpecDefault {
           assertTrue(result == NonEmptyChunk(42))
         }
       }
+      test("applies the element validation in scope even though the element type is unchanged") {
+        given Validation[Violation, Int, Int] = Validations.positive
+
+        assertTrue(
+          Chunk(1, -2, 3).validateAs[NonEmptyChunk[Int]].is(_.left) ==
+            Violations[Violation](children = Map(Violations.Path(1) -> Violations(Vector(Violation.NonPositive(-2))))),
+        )
+      }
     }
     suiteAll("Chunk → NonEmptyChunk (element transform)") {
       test("transforms all elements") {

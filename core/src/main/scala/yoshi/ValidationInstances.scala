@@ -1,6 +1,6 @@
 package yoshi
 
-trait ValidationInstances {
+trait ValidationInstances extends ValidationInstancesLowPriority {
 
   /** Automatically lifts a `Validation[V, A, B]` to `Validation[V, Option[A], Option[B]]`. `None` passes through; `Some(a)` is validated.
     */
@@ -34,4 +34,34 @@ trait ValidationInstances {
       if (errors.isEmpty) Right(successes.toMap)
       else Left(errors.reduce(_ ++ _))
     }
+}
+
+trait ValidationInstancesLowPriority extends ValidationInstancesLowestPriority {
+
+  /** Treats an `Option[A]` as a required value and validates what it holds into `B`: `None` fails with the violation from [[Required]],
+    * `Some(a)` is validated by the `Validation[V, A, B]` in scope.
+    *
+    * Whether a field is required is expressed by the type it is validated into. `validateAs[B]` demands a value, while
+    * `validateAs[Option[B]]` accepts its absence and passes `None` through.
+    */
+  given optionCanBeValidatedAsRequired[V, A, B](using
+    validation: Validation[V, A, B],
+    required: Required[V],
+  ): Validation[V, Option[A], B] =
+    Validation.required[V, A](required.violation) >> validation
+}
+
+trait ValidationInstancesLowestPriority {
+
+  /** Leaves a value unchanged, so a derivation whose output type matches its input needs no instance of its own.
+    *
+    * `Option[A]` to `A` and `Seq[A]` to `Seq[A]` fall out of the derivations above through this instance. A `Validation[V, A, A]` the
+    * caller defines or imports is in lexical scope and takes precedence over this one, so it is still applied where it exists.
+    *
+    * The [[Required]] instance is what names the violation type. Nothing else in this instance mentions `V`, and `ValidatedAs` captures it
+    * in an invariant type member, so without it `.validateAs` on a pass-through field would widen the violation type to `Any` and fail to
+    * combine with the other fields of a [[Validation.cursor]].
+    */
+  given valueCanBeValidatedAsItself[V, A](using Required[V]): Validation[V, A, A] =
+    Validation.succeed[A]
 }
