@@ -4,6 +4,6 @@
     "sbt@1",
     "temurin-bin-25@latest",
     "nodejs@24",
-    "pnpm@11.20.0"
+    "pnpm@11.22.0"
   ]
 }
