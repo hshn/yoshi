@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/hshn/yoshi/compare/v0.2.2...v0.3.0) (2026-08-27)
+
+
+### Features
+
+* validate an optional input into a required domain type ([#191](https://github.com/hshn/yoshi/issues/191)) ([89efbf5](https://github.com/hshn/yoshi/commit/89efbf5d089e6c9ef7febfc86ecd2022cd26c4a0))
+
 ## [0.2.2](https://github.com/hshn/yoshi/compare/v0.2.1...v0.2.2) (2026-08-22)
 
 
