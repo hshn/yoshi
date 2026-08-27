@@ -3,7 +3,7 @@ package yoshi.defaults
 import yoshi.Required
 import yoshi.Validation
 
-implicit val optionIsRequired: Required[Violation] =
+implicit val requiredViolation: Required[Violation] =
   Required(Violation.Required)
 
 implicit val stringCanBeInt: Validation[Violation, String, Int] =

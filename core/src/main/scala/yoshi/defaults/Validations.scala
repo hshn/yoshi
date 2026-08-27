@@ -6,7 +6,7 @@ import yoshi.*
 object Validations {
 
   def required[A]: Validation[Violation, Option[A], A] =
-    Validation.required(Violation.Required)
+    Validation.required(requiredViolation.violation)
 
   def parseInt: Validation[Violation, String, Int] =
     Validation.parseInt(Violation.NonIntegerString(_))
