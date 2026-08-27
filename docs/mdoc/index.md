@@ -144,8 +144,8 @@ enum MyViolation:
   case Missing
   case NotAnInt(value: String)
 
-implicit val required: Required[MyViolation] = Required(MyViolation.Missing)
-implicit val parseInt: Validation[MyViolation, String, Int] = Validation.parseInt(MyViolation.NotAnInt(_))
+given Required[MyViolation] = Required(MyViolation.Missing)
+given Validation[MyViolation, String, Int] = Validation.parseInt(MyViolation.NotAnInt(_))
 
 summon[Validation[MyViolation, Option[String], Int]]
 ```
