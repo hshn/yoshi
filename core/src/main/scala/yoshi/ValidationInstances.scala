@@ -53,11 +53,11 @@ trait ValidationInstancesLowPriority extends ValidationInstancesLowestPriority {
 
 trait ValidationInstancesLowestPriority {
 
-  /** Extracts the value an `Option[A]` holds, failing with the violation from [[Required]] when it is absent.
+  /** Leaves a value unchanged, so a derivation whose output type matches its input needs no instance of its own.
     *
-    * Ranked below [[ValidationInstancesLowPriority.optionCanBeValidatedAsRequired]], so a `Validation[V, A, A]` in scope is still applied
-    * to the extracted value; this instance takes over only when there is none.
+    * `Option[A]` to `A` and `Seq[A]` to `Seq[A]` fall out of the derivations above through this instance. A `Validation[V, A, A]` the
+    * caller defines or imports is in lexical scope and takes precedence over this one, so it is still applied where it exists.
     */
-  given requiredCanBeValidated[V, A](using required: Required[V]): Validation[V, Option[A], A] =
-    Validation.required(required.violation)
+  given valueCanBeValidatedAsItself[V, A]: Validation[V, A, A] =
+    Validation.succeed[A]
 }

@@ -49,6 +49,15 @@ object ValidationTypeclassSpec extends ZIOSpecDefault {
 
         assertTrue(v.run(None).is(_.left) == Violations.of(Violation.Required))
       }
+      test("extract the value an Option holds when no validation narrows it") {
+        val v = summon[Validation[Violation, Option[String], String]]
+
+        for {
+          result <- v.run(Some("hello"))
+        } yield {
+          assertTrue(result == "hello")
+        }
+      }
       test("report the violation of the validation it delegates to") {
         val v = summon[Validation[Violation, Option[String], Int]]
 
@@ -83,20 +92,24 @@ object ValidationTypeclassSpec extends ZIOSpecDefault {
         }
       }
     }
-    suiteAll("requiredCanBeValidated") {
-      test("extract the value an Option holds") {
-        val v = summon[Validation[Violation, Option[String], String]]
+    suiteAll("valueCanBeValidatedAsItself") {
+      test("leave a value unchanged") {
+        val v = summon[Validation[Violation, String, String]]
 
         for {
-          result <- v.run(Some("hello"))
+          result <- v.run("hello")
         } yield {
           assertTrue(result == "hello")
         }
       }
-      test("fail with the Required violation on None") {
-        val v = summon[Validation[Violation, Option[String], String]]
+      test("derive a container validation without a user-supplied instance") {
+        val v = summon[Validation[Violation, Seq[String], Seq[String]]]
 
-        assertTrue(v.run(None).is(_.left) == Violations.of(Violation.Required))
+        for {
+          result <- v.run(Seq("a", "bb"))
+        } yield {
+          assertTrue(result == Seq("a", "bb"))
+        }
       }
     }
     suiteAll("seqCanBeValidatedAs") {
