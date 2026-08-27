@@ -1,6 +1,6 @@
 package yoshi
 
-trait ValidationInstances {
+trait ValidationInstances extends ValidationInstancesLowPriority {
 
   /** Automatically lifts a `Validation[V, A, B]` to `Validation[V, Option[A], Option[B]]`. `None` passes through; `Some(a)` is validated.
     */
@@ -34,4 +34,30 @@ trait ValidationInstances {
       if (errors.isEmpty) Right(successes.toMap)
       else Left(errors.reduce(_ ++ _))
     }
+}
+
+trait ValidationInstancesLowPriority extends ValidationInstancesLowestPriority {
+
+  /** Extracts the value an `Option[A]` holds, failing with the violation from [[Required]] when it is absent.
+    *
+    * Ranked above [[ValidationInstancesLowestPriority.optionCanBeValidatedAsRequired]] so that extracting a value keeps its type rather
+    * than being routed through a `Validation[V, A, A]` that happens to be in scope.
+    */
+  given requiredCanBeValidated[V, A](using required: Required[V]): Validation[V, Option[A], A] =
+    Validation.required(required.violation)
+}
+
+trait ValidationInstancesLowestPriority {
+
+  /** Treats an `Option[A]` as a required value and validates what it holds into `B`: `None` fails with the violation from [[Required]],
+    * `Some(a)` is validated by the `Validation[V, A, B]` in scope.
+    *
+    * Whether a field is required is expressed by the type it is validated into. `validateAs[B]` demands a value, while
+    * `validateAs[Option[B]]` accepts its absence and passes `None` through.
+    */
+  given optionCanBeValidatedAsRequired[V, A, B](using
+    validation: Validation[V, A, B],
+    required: Required[V],
+  ): Validation[V, Option[A], B] =
+    Validation.required[V, A](required.violation) >> validation
 }

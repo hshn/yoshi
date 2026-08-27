@@ -34,6 +34,65 @@ object ValidationTypeclassSpec extends ZIOSpecDefault {
         assertTrue(v.run(Some("ab")).is(_.left) == Violations.of(Violation.TooShortString("ab", 5)))
       }
     }
+    suiteAll("optionCanBeValidatedAsRequired") {
+      test("validate the value an Option holds") {
+        val v = summon[Validation[Violation, Option[String], Int]]
+
+        for {
+          result <- v.run(Some("42"))
+        } yield {
+          assertTrue(result == 42)
+        }
+      }
+      test("fail with the Required violation on None") {
+        val v = summon[Validation[Violation, Option[String], Int]]
+
+        assertTrue(v.run(None).is(_.left) == Violations.of(Violation.Required))
+      }
+      test("report the violation of the validation it delegates to") {
+        val v = summon[Validation[Violation, Option[String], Int]]
+
+        assertTrue(v.run(Some("abc")).is(_.left) == Violations.of(Violation.NonIntegerString("abc")))
+      }
+      test("keep passing None through when the output type is an Option") {
+        given Validation[Violation, String, Int] = Validations.parseInt
+        val v                                    = summon[Validation[Violation, Option[String], Option[Int]]]
+
+        for {
+          result <- v.run(None)
+        } yield {
+          assertTrue(result == None)
+        }
+      }
+      test("require each level of a nested Option separately") {
+        val v = summon[Validation[Violation, Option[Option[String]], Option[Int]]]
+
+        for {
+          absent  <- v.run(None)
+          present <- v.run(Some(Some("42")))
+        } yield {
+          assertTrue(absent == None) &&
+          assertTrue(present == Some(42)) &&
+          assertTrue(v.run(Some(None)).is(_.left) == Violations.of(Violation.Required))
+        }
+      }
+    }
+    suiteAll("requiredCanBeValidated") {
+      test("extract the value an Option holds") {
+        val v = summon[Validation[Violation, Option[String], String]]
+
+        for {
+          result <- v.run(Some("hello"))
+        } yield {
+          assertTrue(result == "hello")
+        }
+      }
+      test("fail with the Required violation on None") {
+        val v = summon[Validation[Violation, Option[String], String]]
+
+        assertTrue(v.run(None).is(_.left) == Violations.of(Violation.Required))
+      }
+    }
     suiteAll("seqCanBeValidatedAs") {
       test("validate all elements in Seq") {
         given Validation[Violation, String, String] = Validations.minLength(1)
