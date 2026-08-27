@@ -21,7 +21,7 @@ private[yoshi] trait NonEmptyChunkInstances { self: AssociativeBothInstances =>
   ): Validation[V, Chunk[A], NonEmptyChunk[B]] = Validation.instance[Chunk[A]] { chunk =>
     for {
       as <- required.run(NonEmptyChunk.fromIterableOption(chunk))
-      bs <- nonEmptyChunkValidation(using element).run(as)
+      bs <- as.validateAs[NonEmptyChunk[B]]
     } yield {
       bs
     }

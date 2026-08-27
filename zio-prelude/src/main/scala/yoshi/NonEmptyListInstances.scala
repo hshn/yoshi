@@ -19,7 +19,7 @@ private[yoshi] trait NonEmptyListInstances { self: AssociativeBothInstances =>
   ): Validation[V, List[A], NonEmptyList[B]] = Validation.instance[List[A]] { list =>
     for {
       as <- required.run(NonEmptyList.fromIterableOption(list))
-      bs <- nonEmptyListValidation(using element).run(as)
+      bs <- as.validateAs[NonEmptyList[B]]
     } yield {
       bs
     }

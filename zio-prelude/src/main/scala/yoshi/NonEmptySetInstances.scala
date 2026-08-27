@@ -8,7 +8,7 @@ private[yoshi] trait NonEmptySetInstances { self: NonEmptyListInstances =>
     v: Validation[V, A, B],
   ): Validation[V, NonEmptySet[A], NonEmptySet[B]] = Validation.instance[NonEmptySet[A]] { as =>
     for {
-      bs <- nonEmptyListValidation(using v).run(as.toNonEmptyList)
+      bs <- as.toNonEmptyList.validateAs[NonEmptyList[B]]
     } yield {
       NonEmptySet.fromNonEmptyList(bs)
     }
@@ -20,7 +20,7 @@ private[yoshi] trait NonEmptySetInstances { self: NonEmptyListInstances =>
   ): Validation[V, Set[A], NonEmptySet[B]] = Validation.instance[Set[A]] { set =>
     for {
       as <- required.run(NonEmptySet.fromIterableOption(set))
-      bs <- nonEmptySetValidation(using element).run(as)
+      bs <- as.validateAs[NonEmptySet[B]]
     } yield {
       bs
     }
