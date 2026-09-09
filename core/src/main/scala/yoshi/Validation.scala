@@ -25,7 +25,7 @@ import scala.util.matching.Regex
   * @tparam A
   *   input type (contravariant)
   * @tparam B
-  *   output type on success (covariant)
+  *   output type on success (invariant, so an instance is selected only for the exact type asked for)
   */
 sealed abstract class Validation[+V, -A, B] { self =>
 
