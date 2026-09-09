@@ -20,6 +20,23 @@ trait ValidateN:
     def validateN[A](f: Out => A): Either[Violations[V], A] =
       tv.validate(validations).map(f)
 
+    /** Accumulate the violations of every element, then build the result with a function that can fail in turn.
+      *
+      * Violations reported by `f` describe the combination itself — a rule that no single element can decide.
+      *
+      * {{{
+      * (
+      *   input.start.validateAs[Date].at("start"),
+      *   input.end.validateAs[Date].at("end"),
+      * ).validateWith { case (start, end) =>
+      *   if (start.isBefore(end)) Right(Period(start, end))
+      *   else Left(Violations.of(Violation.EndBeforeStart).asChild("end"))
+      * }
+      * }}}
+      */
+    def validateWith[A](f: Out => Either[Violations[V], A]): Either[Violations[V], A] =
+      tv.validate(validations).flatMap(f)
+
 sealed trait ValidateTuple[V, T <: Tuple, Out <: Tuple]:
   def validate(t: T): Either[Violations[V], Out]
 

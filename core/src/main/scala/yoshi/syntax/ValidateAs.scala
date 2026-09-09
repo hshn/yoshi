@@ -20,6 +20,15 @@ trait ValidateAs:
     def at(key: String): Either[Violations[V], A]           = at(Violations.Path.Key(key))
     def at(index: Int): Either[Violations[V], A]            = at(Violations.Path.Index(index))
 
+    /** Continue validating an already validated value, short-circuiting on the violations already collected.
+      *
+      * {{{
+      * input.id.validateAs[String].at("id").andValidateAs[UserId]
+      * }}}
+      */
+    def andValidateAs[B](using va: ValidatedAs[A, B]): Either[Violations[V | va.Err], B] =
+      value.flatMap(va.run)
+
 /** Bridge typeclass that captures a [[Validation]] with its error type as a type member.
   *
   * Instances are derived automatically via `transparent inline given` from any [[Validation]] in implicit scope, allowing the compiler to
