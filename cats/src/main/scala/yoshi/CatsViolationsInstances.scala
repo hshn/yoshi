@@ -1,6 +1,6 @@
 package yoshi
 
-import cats.kernel.Monoid
+import _root_.cats.kernel.Monoid
 
 private[yoshi] trait CatsViolationsInstances {
 

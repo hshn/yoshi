@@ -1,9 +1,9 @@
 package yoshi
 
-import cats.data.NonEmptyChain
-import cats.syntax.all.*
+import _root_.cats.data.NonEmptyChain
+import _root_.cats.syntax.all.*
 
-private[yoshi] trait CatsNonEmptyChainInstances { self: CatsViolationsInstances =>
+private[yoshi] trait CatsNonEmptyChainInstances extends CatsViolationsInstances {
 
   /** Validates each element of a `NonEmptyChain`, reporting violations under the element index. */
   implicit def nonEmptyChainCanBeValidatedAs[V, A, B](using

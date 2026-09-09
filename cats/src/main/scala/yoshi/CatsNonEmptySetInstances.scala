@@ -1,9 +1,9 @@
 package yoshi
 
-import cats.Order
-import cats.data.NonEmptySet
+import _root_.cats.Order
+import _root_.cats.data.NonEmptySet
 
-private[yoshi] trait CatsNonEmptySetInstances { self: CatsNonEmptyListInstances =>
+private[yoshi] trait CatsNonEmptySetInstances extends CatsNonEmptyListInstances {
 
   /** Validates each element of a `NonEmptySet`, reporting violations under the index the element has in sorted order. */
   implicit def nonEmptySetCanBeValidatedAs[V, A, B](using

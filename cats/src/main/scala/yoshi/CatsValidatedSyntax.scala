@@ -1,6 +1,6 @@
 package yoshi
 
-import cats.data.Validated
+import _root_.cats.data.Validated
 
 private[yoshi] trait CatsValidatedSyntax {
 

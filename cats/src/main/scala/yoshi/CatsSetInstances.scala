@@ -1,8 +1,8 @@
 package yoshi
 
-import cats.syntax.all.*
+import _root_.cats.syntax.all.*
 
-private[yoshi] trait CatsSetInstances { self: CatsViolationsInstances =>
+private[yoshi] trait CatsSetInstances extends CatsViolationsInstances {
 
   /** Validates each element of any collection into a `Set`, reporting violations under the index the element had in the input. */
   implicit def iterableCanBeValidatedAsSet[V, A, B](using
