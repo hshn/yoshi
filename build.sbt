@@ -20,7 +20,8 @@ ThisBuild / scalacOptions := Seq(
 
 ThisBuild / testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
 
-val zio = "2.1.26"
+val zio      = "2.1.26"
+val catsCore = "2.13.0"
 
 lazy val root = (project in file(".")).withId("yoshi")
   .settings(
@@ -33,6 +34,7 @@ lazy val root = (project in file(".")).withId("yoshi")
   .aggregate(
     core,
     `zio-prelude`,
+    cats,
   )
 
 lazy val core = (project in file("core")).withId("yoshi-core")
@@ -51,6 +53,15 @@ lazy val `zio-prelude` = (project in file("zio-prelude")).withId("yoshi-zio-prel
     name := "yoshi-zio-prelude",
     libraryDependencies ++= Seq(
       "dev.zio" %% "zio-prelude" % "1.0.0-RC48",
+    ),
+  )
+
+lazy val cats = (project in file("cats")).withId("yoshi-cats")
+  .dependsOn(core % "test->test;compile->compile")
+  .settings(
+    name := "yoshi-cats",
+    libraryDependencies ++= Seq(
+      "org.typelevel" %% "cats-core" % catsCore,
     ),
   )
 

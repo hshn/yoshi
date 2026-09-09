@@ -1,0 +1,24 @@
+package yoshi
+
+import cats.Order
+import cats.data.NonEmptySet
+
+private[yoshi] trait CatsNonEmptySetInstances { self: CatsNonEmptyListInstances =>
+
+  /** Validates each element of a `NonEmptySet`, reporting violations under the index the element has in sorted order. */
+  implicit def nonEmptySetCanBeValidatedAs[V, A, B](using
+    Validation[V, A, B],
+    Order[B],
+  ): Validation[V, NonEmptySet[A], NonEmptySet[B]] =
+    nonEmptyListCanBeValidatedAs[V, A, B]
+      .contramap[NonEmptySet[A]](_.toNonEmptyList)
+      .map(_.toNes)
+
+  /** Validates each element of any collection into a `NonEmptySet`, failing with the [[Required]] violation when it is empty. */
+  implicit def iterableCanBeValidatedAsNonEmptySet[V, A, B](using
+    Validation[V, A, B],
+    Required[V],
+    Order[B],
+  ): Validation[V, Iterable[A], NonEmptySet[B]] =
+    iterableCanBeValidatedAsNonEmptyList[V, A, B].map(_.toNes)
+}
