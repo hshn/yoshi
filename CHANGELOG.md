@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.4.0](https://github.com/hshn/yoshi/compare/v0.3.0...v0.4.0) (2026-09-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* resolve validations by the exact output type ([#198](https://github.com/hshn/yoshi/issues/198))
+
+### Features
+
+* support cats data types as validation targets ([#203](https://github.com/hshn/yoshi/issues/203)) ([8c9e6f4](https://github.com/hshn/yoshi/commit/8c9e6f4eac4defab83c4d4ea8b1e0f7b9ed1459c))
+
+
+### Bug Fixes
+
+* resolve validations by the exact output type ([#198](https://github.com/hshn/yoshi/issues/198)) ([02094f4](https://github.com/hshn/yoshi/commit/02094f461ed41679f2dde310672db0ffb2a9acff))
+
 ## [0.3.0](https://github.com/hshn/yoshi/compare/v0.2.2...v0.3.0) (2026-08-27)
 
 
