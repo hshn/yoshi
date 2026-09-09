@@ -13,7 +13,10 @@ private[yoshi] trait CatsNonEmptyChainInstances extends CatsViolationsInstances 
       as.zipWithIndex.traverse { case (a, index) => validation.run(a).at(index).toValidated }.toEither
     }
 
-  /** Validates each element of any collection into a `NonEmptyChain`, failing with the [[Required]] violation when it is empty. */
+  /** Validates each element of any collection into a `NonEmptyChain`, failing with the [[Required]] violation when it is empty.
+    *
+    * The index in the violation path follows iteration order, which an unordered input such as `Set` does not fix.
+    */
   implicit def iterableCanBeValidatedAsNonEmptyChain[V, A, B](using
     validation: Validation[V, A, B],
     required: Required[V],

@@ -14,7 +14,10 @@ private[yoshi] trait CatsNonEmptySetInstances extends CatsNonEmptyListInstances 
       .contramap[NonEmptySet[A]](_.toNonEmptyList)
       .map(_.toNes)
 
-  /** Validates each element of any collection into a `NonEmptySet`, failing with the [[Required]] violation when it is empty. */
+  /** Validates each element of any collection into a `NonEmptySet`, failing with the [[Required]] violation when it is empty.
+    *
+    * The index in the violation path follows iteration order, which an unordered input such as `Set` does not fix.
+    */
   implicit def iterableCanBeValidatedAsNonEmptySet[V, A, B](using
     Validation[V, A, B],
     Required[V],

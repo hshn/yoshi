@@ -15,6 +15,8 @@ private[yoshi] trait CatsNonEmptyListInstances extends CatsViolationsInstances {
 
   /** Validates each element of any collection into a `NonEmptyList`, failing with the [[Required]] violation when it is empty.
     *
+    * The index in the violation path follows iteration order, which an unordered input such as `Set` does not fix.
+    *
     * The input is bound to `Iterable` rather than derived from a `Traverse`, because `Option` has a `Traverse` instance too: a derivation
     * over `Traverse` would also match `Option[A]` to `Option[B]` and, winning from lexical scope, would push an element index into the path
     * of every optional field. `Option` is not an `Iterable`, so the bound rules that out by construction.
