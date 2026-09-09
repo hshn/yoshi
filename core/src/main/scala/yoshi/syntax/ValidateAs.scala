@@ -22,8 +22,10 @@ trait ValidateAs:
 
     /** Continue validating an already validated value, short-circuiting on the violations already collected.
       *
+      * `at` maps violations that are already there, so it belongs after the chain to cover both steps.
+      *
       * {{{
-      * input.id.validateAs[String].at("id").andValidateAs[UserId]
+      * input.id.validateAs[String].andValidateAs[UserId].at("id")
       * }}}
       */
     def andValidateAs[B](using va: ValidatedAs[A, B]): Either[Violations[V | va.Err], B] =
