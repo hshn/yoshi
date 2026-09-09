@@ -23,7 +23,7 @@ object CatsValidatedSpec extends ZIOSpecDefault {
         val result = (
           Validations.parseInt.runValidated("abc").leftMap(_.asChild("age")),
           Validations.minLength(3).runValidated("ab").leftMap(_.asChild("name")),
-        ).mapN { case (age, name) => (age, name) }
+        ).mapN((_, _))
 
         assertTrue(
           result == Validated.invalid(

@@ -43,10 +43,12 @@ object CatsViolationsSpec extends ZIOSpecDefault {
     }
     suiteAll("what the instance unlocks") {
       test("Validated accumulates through mapN") {
-        val result = (
-          Validated.invalid(Violations.of(Violation.Required).asChild("name")),
-          Validated.invalid(Violations.of(Violation.NonIntegerString("abc")).asChild("age")),
-        ).mapN { case (name: String, age: Int) => (name, age) }
+        val name: Validated[Violations[Violation], String] =
+          Validated.invalid(Violations.of(Violation.Required).asChild("name"))
+        val age: Validated[Violations[Violation], Int] =
+          Validated.invalid(Violations.of(Violation.NonIntegerString("abc")).asChild("age"))
+
+        val result = (name, age).mapN((_, _))
 
         assertTrue(
           result == Validated.invalid(
@@ -59,7 +61,7 @@ object CatsViolationsSpec extends ZIOSpecDefault {
         val result = (
           Option.empty[String].validateAs[String].at("name"),
           "abc".validateAs[Int].at("age"),
-        ).parMapN { case (name, age) => (name, age) }
+        ).parMapN((_, _))
 
         assertTrue(
           result.is(_.left) ==
