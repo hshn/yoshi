@@ -25,7 +25,7 @@ trait ValidateAs:
   * Instances are derived automatically via `transparent inline given` from any [[Validation]] in implicit scope, allowing the compiler to
   * resolve the concrete `Err` type at each use site.
   */
-sealed trait ValidatedAs[-A, +B]:
+sealed trait ValidatedAs[-A, B]:
   type Err
   def run(a: A): Either[Violations[Err], B]
 

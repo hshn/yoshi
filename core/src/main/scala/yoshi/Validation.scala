@@ -25,9 +25,9 @@ import scala.util.matching.Regex
   * @tparam A
   *   input type (contravariant)
   * @tparam B
-  *   output type on success (covariant)
+  *   output type on success (invariant, so an instance is selected only for the exact type asked for)
   */
-sealed abstract class Validation[+V, -A, +B] { self =>
+sealed abstract class Validation[+V, -A, B] { self =>
 
   /** Run this validation on the given input.
     *
@@ -128,7 +128,7 @@ sealed abstract class Validation[+V, -A, +B] { self =>
 /** Factory methods and given instances for [[Validation]]. */
 object Validation extends ValidationInstances {
 
-  final private class Impl[+V, -A, +B](f: A => Either[Violations[V], B]) extends Validation[V, A, B] {
+  final private class Impl[+V, -A, B](f: A => Either[Violations[V], B]) extends Validation[V, A, B] {
     def run(a: A): Either[Violations[V], B] = f(a)
   }
 
