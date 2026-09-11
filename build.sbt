@@ -35,6 +35,7 @@ lazy val root = (project in file(".")).withId("yoshi")
     core,
     `zio-prelude`,
     cats,
+    `interop-tests`,
   )
 
 lazy val core = (project in file("core")).withId("yoshi-core")
@@ -63,6 +64,13 @@ lazy val cats = (project in file("cats")).withId("yoshi-cats")
     libraryDependencies ++= Seq(
       "org.typelevel" %% "cats-core" % catsCore,
     ),
+  )
+
+lazy val `interop-tests` = (project in file("interop-tests")).withId("yoshi-interop-tests")
+  .dependsOn(core % "test->test;compile->compile", cats, `zio-prelude`)
+  .settings(
+    name           := "yoshi-interop-tests",
+    publish / skip := true,
   )
 
 lazy val docs = (project in file("docs")).withId("yoshi-docs")
