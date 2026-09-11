@@ -1,8 +1,9 @@
-package yoshi
+package yoshi.interop
 
 import _root_.cats.kernel.Monoid
+import yoshi.Violations
 
-private[yoshi] trait CatsViolationsInstances {
+private[interop] trait CatsViolationsInstances {
 
   /** Merges violation trees, which is what every accumulating cats combinator needs from an error type.
     *

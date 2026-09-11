@@ -1,8 +1,10 @@
-package yoshi
+package yoshi.interop
 
 import _root_.cats.data.Validated
+import yoshi.Validation
+import yoshi.Violations
 
-private[yoshi] trait CatsValidatedSyntax {
+private[interop] trait CatsValidatedSyntax {
 
   extension [V, A, B](self: Validation[V, A, B])
 

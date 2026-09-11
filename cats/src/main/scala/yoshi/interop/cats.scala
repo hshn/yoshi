@@ -1,12 +1,5 @@
 package yoshi.interop
 
-import yoshi.CatsNonEmptyChainInstances
-import yoshi.CatsNonEmptyListInstances
-import yoshi.CatsNonEmptySetInstances
-import yoshi.CatsSetInstances
-import yoshi.CatsValidatedSyntax
-import yoshi.CatsViolationsInstances
-
 /** Everything yoshi offers for cats.
   *
   * Package `yoshi` exports these members, so having the module on the classpath is enough — `import yoshi.*` brings them in along with the

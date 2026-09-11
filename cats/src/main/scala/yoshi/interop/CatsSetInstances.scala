@@ -1,8 +1,10 @@
-package yoshi
+package yoshi.interop
 
 import _root_.cats.syntax.all.*
+import yoshi.Validation
+import yoshi.syntax.all.*
 
-private[yoshi] trait CatsSetInstances extends CatsViolationsInstances {
+private[interop] trait CatsSetInstances extends CatsViolationsInstances {
 
   /** Validates each element of any collection into a `Set`, reporting violations under the index the element had in the input.
     *
