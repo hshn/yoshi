@@ -1,10 +1,12 @@
-package yoshi
+package yoshi.interop
 
-import zio.Chunk
-import zio.NonEmptyChunk
-import zio.prelude.{Validation as _, *}
+import _root_.zio.Chunk
+import _root_.zio.NonEmptyChunk
+import _root_.zio.prelude.{Validation as _, *}
+import yoshi.Validation
+import yoshi.syntax.all.*
 
-private[yoshi] trait NonEmptyChunkInstances { self: AssociativeBothInstances =>
+private[interop] trait NonEmptyChunkInstances extends AssociativeBothInstances {
 
   implicit def nonEmptyChunkValidation[V, A, B](using
     v: Validation[V, A, B],

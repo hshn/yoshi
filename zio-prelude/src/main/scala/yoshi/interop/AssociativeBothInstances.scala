@@ -1,8 +1,9 @@
-package yoshi
+package yoshi.interop
 
-import zio.prelude.AssociativeBoth
+import _root_.zio.prelude.AssociativeBoth
+import yoshi.Violations
 
-private[yoshi] trait AssociativeBothInstances {
+private[interop] trait AssociativeBothInstances {
 
   implicit def violationsAssociativeBoth[V]: AssociativeBoth[[X] =>> Either[Violations[V], X]] =
     new AssociativeBoth[[X] =>> Either[Violations[V], X]] {

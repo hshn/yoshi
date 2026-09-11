@@ -1,8 +1,10 @@
-package yoshi
+package yoshi.interop
 
-import zio.prelude.{Validation as _, *}
+import _root_.zio.prelude.{Validation as _, *}
+import yoshi.Validation
+import yoshi.syntax.all.*
 
-private[yoshi] trait NonEmptyListInstances { self: AssociativeBothInstances =>
+private[interop] trait NonEmptyListInstances extends AssociativeBothInstances {
 
   implicit def nonEmptyListValidation[V, A, B](using
     v: Validation[V, A, B],

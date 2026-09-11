@@ -1,8 +1,10 @@
-package yoshi
+package yoshi.interop
 
-import zio.prelude.Newtype
+import _root_.zio.prelude.Newtype
+import yoshi.Validation
+import yoshi.Violations
 
-private[yoshi] trait NewtypeSyntax {
+private[interop] trait NewtypeSyntax {
 
   extension (self: Validation.type)
 
