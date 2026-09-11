@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.5.0](https://github.com/hshn/yoshi/compare/v0.4.0...v0.5.0) (2026-09-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* reach zio-prelude instances through import yoshi.* ([#204](https://github.com/hshn/yoshi/issues/204))
+
+### Features
+
+* reach zio-prelude instances through import yoshi.* ([#204](https://github.com/hshn/yoshi/issues/204)) ([01fc39d](https://github.com/hshn/yoshi/commit/01fc39d0cb1df5c99f25d306594c60fc50cc0fb3))
+
 ## [0.4.0](https://github.com/hshn/yoshi/compare/v0.3.0...v0.4.0) (2026-09-09)
 
 
