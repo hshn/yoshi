@@ -1,7 +1,7 @@
 package yoshi
 
 import yoshi.defaults.*
-import yoshi.prelude.*
+import yoshi.interop.zioprelude.*
 import zio.prelude.NonEmptyList
 import zio.test.*
 

@@ -1,7 +1,7 @@
 package yoshi
 
 import yoshi.defaults.*
-import yoshi.prelude.*
+import yoshi.interop.zioprelude.*
 import zio.Chunk
 import zio.NonEmptyChunk
 import zio.test.*
