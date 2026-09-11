@@ -10,8 +10,13 @@ package yoshi.interop
   * import yoshi.defaults.*
   * }}}
   *
-  * It sits under `yoshi.interop` rather than at `yoshi.prelude`, because as a member of package `yoshi` the name would be bound by
-  * `import yoshi.*` and would hide `zio.prelude` from every file that uses both.
+  * It sits under `yoshi.interop` rather than at `yoshi.prelude`: as a member of package `yoshi`, the name `prelude` would be bound by
+  * `import yoshi.*`, and a bare `prelude.…` reference becomes ambiguous for a caller who also writes `import zio.*`:
+  *
+  * {{{
+  * Reference to prelude is ambiguous.
+  * It is both imported by import yoshi._ and imported subsequently by import zio._
+  * }}}
   */
 object zioprelude
   extends AssociativeBothInstances

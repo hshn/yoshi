@@ -8,8 +8,11 @@ import zio.test.*
 
 /** Written from outside the library, naming the provenance instead of relying on the export.
   *
-  * The entry point sits at `yoshi.interop.zioprelude` rather than `yoshi.prelude` for the sake of these very imports: as a member of
-  * package `yoshi`, the name `prelude` would be bound by `import yoshi.*` and would hide `zio.prelude` from every file that uses both.
+  * The entry point sits at `yoshi.interop.zioprelude` rather than `yoshi.prelude`: as a member of package `yoshi`, the name `prelude` would
+  * be bound by `import yoshi.*`, and a bare `prelude.…` reference becomes ambiguous for a caller who also writes `import zio.*`. This file
+  * names `zio.prelude` and `yoshi.interop.zioprelude` explicitly rather than referencing `prelude` bare, so moving the object back to
+  * `yoshi.prelude` would not break it — the hazard only reaches a caller who writes both `yoshi.*` and `zio.*` and then leaves `prelude`
+  * unqualified.
   */
 object ZioPreludeNamespaceSpec extends ZIOSpecDefault {
 

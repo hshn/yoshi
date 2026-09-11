@@ -9,6 +9,9 @@ import zio.test.*
 
 /** `import yoshi.*` alone, with no interop import: the module's instances and syntax reach the caller through the export in package
   * `yoshi`, the way the core syntax already does.
+  *
+  * This is what pins the instances as `implicit`, never `given`: a wildcard import skips `given` definitions, so converting them would take
+  * them out of `import yoshi.*` and this file would stop compiling.
   */
 object CatsSingleImportSpec extends ZIOSpecDefault {
 

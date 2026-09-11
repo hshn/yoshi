@@ -6,8 +6,14 @@ import zio.test.*
 
 /** Both interop modules on one classpath, reached through `import yoshi.*` alone.
   *
-  * Each module lifts its instances into package `yoshi` from its own jar. Nothing else in the build puts the two jars together, so this is
-  * the only place where a name they both claim — a shared export file name, an instance for the same type — can be caught.
+  * Each module lifts its instances into package `yoshi` from its own jar. A top-level export compiles to `yoshi/<file name>$package.class`,
+  * so two modules sharing a file name collide on the classpath and one export vanishes with no error and no warning. Nothing else in the
+  * build puts the two jars together, so this file's compilation is the only thing that catches it — either that collision, or an instance
+  * the two modules both claim for the same type.
+  *
+  * The two halves don't catch equally well: losing either export breaks this file's compilation outright, unconditionally. A duplicate
+  * instance is only caught for the types this spec exercises below — a future duplicate on some other type would pass unnoticed here.
+  * Whoever adds a new interop module should add its types to this spec too.
   */
 object AllInteropModulesSpec extends ZIOSpecDefault {
 
