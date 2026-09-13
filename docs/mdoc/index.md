@@ -12,7 +12,7 @@ A validation library that transforms untyped input into domain types — not jus
 ## Setup
 
 ```scala
-libraryDependencies += "io.github.hshn" %% "yoshi-core" % "@VERSION@"
+libraryDependencies += "dev.hshn" %% "yoshi-core" % "@VERSION@"
 ```
 
 ## The idea
