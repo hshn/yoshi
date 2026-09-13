@@ -33,7 +33,7 @@ import cats.data.NonEmptyList
 NonEmptyList.of("1", "x", "3").validateAs[NonEmptyList[Int]].left.map(_.toList)
 ```
 
-Any collection can be validated into a `NonEmptyList[B]` too. The output type says the domain needs at least one element, so an empty input fails with the `Required` violation — the same one an absent `Option` reports:
+Any `Iterable` can be validated into a `NonEmptyList[B]` too. The output type says the domain needs at least one element, so an empty input fails with the `Required` violation — the same one an absent `Option` reports:
 
 ```scala mdoc
 List("1", "2").validateAs[NonEmptyList[Int]]
@@ -61,7 +61,7 @@ post.run(FormInput(tags = List("1", "x"))).left.map(_.toList)
 post.run(FormInput(tags = Nil)).left.map(_.toList)
 ```
 
-`NonEmptyChain` and `NonEmptySet` work the same way — each validates element by element, and any collection validates into one, failing with `Required` when empty. The index in a violation path follows the input's iteration order, so validate from an ordered collection where the path has to be stable.
+`NonEmptyChain` and `NonEmptySet` work the same way — each validates element by element, and any `Iterable` validates into one, failing with `Required` when empty. The index in a violation path follows the input's iteration order, so validate from an ordered collection where the path has to be stable.
 
 As with the core derivations, the module knows nothing about your violation type. It reports an empty input through the `Required` instance — `yoshi.defaults` supplies one for `Violation`, and a violation type of your own needs a single `given Required[MyViolation]`, as described in [Getting Started](./index.md#required-fields).
 
