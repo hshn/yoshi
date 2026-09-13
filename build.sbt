@@ -74,7 +74,7 @@ lazy val `interop-tests` = (project in file("interop-tests")).withId("yoshi-inte
   )
 
 lazy val docs = (project in file("docs")).withId("yoshi-docs")
-  .dependsOn(core, `zio-prelude`)
+  .dependsOn(core, `zio-prelude`, cats)
   .enablePlugins(MdocPlugin, DocusaurusPlugin)
   .settings(
     moduleName := "yoshi-docs",
