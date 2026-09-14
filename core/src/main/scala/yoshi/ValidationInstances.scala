@@ -22,6 +22,15 @@ trait ValidationInstances extends ValidationInstancesLowPriority {
   given listCanBeValidatedAs[V, A, B](using Validation[V, A, B]): Validation[V, List[A], List[B]] =
     seqCanBeValidatedAs[V, A, B].contramap[List[A]](identity).map(_.toList)
 
+  /** Automatically validates each element of any collection into a `Set`, accumulating violations by the index the element had in the
+    * input.
+    *
+    * The index follows iteration order, which an unordered input such as `Set` or `HashSet` does not fix: the same elements can land on
+    * different indices from one run to the next. Where the path has to be stable, validate from an ordered collection.
+    */
+  given iterableCanBeValidatedAsSet[V, A, B](using Validation[V, A, B]): Validation[V, Iterable[A], Set[B]] =
+    seqCanBeValidatedAs[V, A, B].contramap[Iterable[A]](_.toSeq).map(_.toSet)
+
   /** Automatically validates each value of a `Map[String, A]`, accumulating violations by key. */
   given mapCanBeValidatedAs[V, A, B](using
     validation: Validation[V, A, B],
