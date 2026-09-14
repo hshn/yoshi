@@ -29,7 +29,7 @@ trait ValidationInstances extends ValidationInstancesLowPriority {
     * different indices from one run to the next. Where the path has to be stable, validate from an ordered collection.
     */
   given iterableCanBeValidatedAsSet[V, A, B](using Validation[V, A, B]): Validation[V, Iterable[A], Set[B]] =
-    seqCanBeValidatedAs[V, A, B].contramap[Iterable[A]](_.toSeq).map(_.toSet)
+    seqCanBeValidatedAs[V, A, B].contramap[Iterable[A]](_.toList).map(_.toSet)
 
   /** Automatically validates each value of a `Map[String, A]`, accumulating violations by key. */
   given mapCanBeValidatedAs[V, A, B](using
