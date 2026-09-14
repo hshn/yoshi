@@ -18,9 +18,4 @@ package yoshi.interop
   * It is both imported by import yoshi._ and imported subsequently by import zio._
   * }}}
   */
-object zioprelude
-  extends AssociativeBothInstances
-  with NonEmptyListInstances
-  with NonEmptyChunkInstances
-  with NonEmptySetInstances
-  with NewtypeSyntax
+object zioprelude extends AssociativeBothInstances with NonEmptyListInstances with NonEmptySetInstances with NewtypeSyntax
