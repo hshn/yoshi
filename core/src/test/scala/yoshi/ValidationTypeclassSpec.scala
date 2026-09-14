@@ -184,6 +184,51 @@ object ValidationTypeclassSpec extends ZIOSpecDefault {
         assertTrue(v.run(List("ab", "hello", "x")).is(_.left) == expectedViolations)
       }
     }
+    suiteAll("iterableCanBeValidatedAsSet") {
+      test("transform every element of any collection into a Set") {
+        for {
+          fromList   <- summon[Validation[Violation, List[String], Set[Int]]].run(List("1", "2", "3"))
+          fromVector <- summon[Validation[Violation, Vector[String], Set[Int]]].run(Vector("1", "2", "3"))
+          fromSet    <- summon[Validation[Violation, Set[String], Set[Int]]].run(Set("1", "2", "3"))
+        } yield {
+          assertTrue(
+            fromList == Set(1, 2, 3),
+            fromVector == Set(1, 2, 3),
+            fromSet == Set(1, 2, 3),
+          )
+        }
+      }
+      test("drop the duplicates the input held") {
+        val v = summon[Validation[Violation, List[String], Set[Int]]]
+
+        for {
+          result <- v.run(List("1", "1", "2"))
+        } yield {
+          assertTrue(result == Set(1, 2))
+        }
+      }
+      test("succeed with the empty set on empty input") {
+        val v = summon[Validation[Violation, List[String], Set[Int]]]
+
+        for {
+          result <- v.run(List.empty)
+        } yield {
+          assertTrue(result == Set.empty[Int])
+        }
+      }
+      test("accumulate violations with indices") {
+        val v = summon[Validation[Violation, List[String], Set[Int]]]
+
+        val expectedViolations = Violations[Violation](
+          children = Map(
+            Path(0) -> Violations(Vector(Violation.NonIntegerString("abc"))),
+            Path(2) -> Violations(Vector(Violation.NonIntegerString("def"))),
+          ),
+        )
+
+        assertTrue(v.run(List("abc", "2", "def")).is(_.left) == expectedViolations)
+      }
+    }
     suiteAll("mapCanBeValidatedAs") {
       test("validate all values in Map") {
         given Validation[Violation, String, String] = Validations.minLength(1)

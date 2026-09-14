@@ -18,5 +18,4 @@ object cats
   with CatsNonEmptyListInstances
   with CatsNonEmptyChainInstances
   with CatsNonEmptySetInstances
-  with CatsSetInstances
   with CatsValidatedSyntax
