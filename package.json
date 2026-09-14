@@ -3,7 +3,7 @@
   "scripts": {
     "prepare": "husky"
   },
-  "packageManager": "pnpm@11.27.0",
+  "packageManager": "pnpm@12.4.1",
   "devDependencies": {
     "@commitlint/cli": "^21.0.0",
     "@commitlint/config-conventional": "^21.0.0",
