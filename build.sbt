@@ -20,8 +20,8 @@ ThisBuild / scalacOptions := Seq(
 
 ThisBuild / testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
 
-val zio      = "2.1.26"
-val catsCore = "2.13.0"
+val zioVersion = "2.1.26"
+val catsCore   = "2.13.0"
 
 lazy val root = (project in file(".")).withId("yoshi")
   .settings(
@@ -34,6 +34,7 @@ lazy val root = (project in file(".")).withId("yoshi")
   .aggregate(
     core,
     `zio-prelude`,
+    zio,
     cats,
     `interop-tests`,
   )
@@ -42,9 +43,9 @@ lazy val core = (project in file("core")).withId("yoshi-core")
   .settings(
     name := "yoshi-core",
     libraryDependencies ++= Seq(
-      "dev.zio" %% "zio-test"          % zio % Test,
-      "dev.zio" %% "zio-test-sbt"      % zio % Test,
-      "dev.zio" %% "zio-test-magnolia" % zio % Test,
+      "dev.zio" %% "zio-test"          % zioVersion % Test,
+      "dev.zio" %% "zio-test-sbt"      % zioVersion % Test,
+      "dev.zio" %% "zio-test-magnolia" % zioVersion % Test,
     ),
   )
 
@@ -54,6 +55,15 @@ lazy val `zio-prelude` = (project in file("zio-prelude")).withId("yoshi-zio-prel
     name := "yoshi-zio-prelude",
     libraryDependencies ++= Seq(
       "dev.zio" %% "zio-prelude" % "1.0.0-RC48",
+    ),
+  )
+
+lazy val zio = (project in file("zio")).withId("yoshi-zio")
+  .dependsOn(core % "test->test;compile->compile")
+  .settings(
+    name := "yoshi-zio",
+    libraryDependencies ++= Seq(
+      "dev.zio" %% "zio" % zioVersion,
     ),
   )
 
@@ -67,14 +77,14 @@ lazy val cats = (project in file("cats")).withId("yoshi-cats")
   )
 
 lazy val `interop-tests` = (project in file("interop-tests")).withId("yoshi-interop-tests")
-  .dependsOn(core % "test->test;compile->compile", cats, `zio-prelude`)
+  .dependsOn(core % "test->test;compile->compile", cats, `zio-prelude`, zio)
   .settings(
     name           := "yoshi-interop-tests",
     publish / skip := true,
   )
 
 lazy val docs = (project in file("docs")).withId("yoshi-docs")
-  .dependsOn(core, `zio-prelude`, cats)
+  .dependsOn(core, `zio-prelude`, zio, cats)
   .enablePlugins(MdocPlugin, DocusaurusPlugin)
   .settings(
     moduleName := "yoshi-docs",

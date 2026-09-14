@@ -1,12 +1,12 @@
 package yoshi
 
 import yoshi.defaults.*
-import yoshi.interop.zioprelude.*
+import yoshi.interop.zio.*
 import zio.Chunk
 import zio.NonEmptyChunk
 import zio.test.*
 
-object NonEmptyChunkSpec extends ZIOSpecDefault {
+object ZioNonEmptyChunkSpec extends ZIOSpecDefault {
 
   override def spec = suiteAll("NonEmptyChunk") {
     suiteAll("Chunk → NonEmptyChunk") {
