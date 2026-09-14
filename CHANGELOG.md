@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.5.0](https://github.com/hshn/yoshi/compare/v0.4.0...v0.5.0) (2026-09-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* move the Set validation instance from cats to core ([#214](https://github.com/hshn/yoshi/issues/214))
+* move the zio.Chunk instances into a new yoshi-zio module ([#211](https://github.com/hshn/yoshi/issues/211))
+* reach zio-prelude instances through import yoshi.* ([#204](https://github.com/hshn/yoshi/issues/204))
+
+### Features
+
+* move the Set validation instance from cats to core ([#214](https://github.com/hshn/yoshi/issues/214)) ([71c9b8f](https://github.com/hshn/yoshi/commit/71c9b8f1223798db9a698a8e4a3086798b69ea80))
+* move the zio.Chunk instances into a new yoshi-zio module ([#211](https://github.com/hshn/yoshi/issues/211)) ([5e57cc7](https://github.com/hshn/yoshi/commit/5e57cc7bf0f3ba6a638ff04b4145cd5dc8446516))
+* reach zio-prelude instances through import yoshi.* ([#204](https://github.com/hshn/yoshi/issues/204)) ([01fc39d](https://github.com/hshn/yoshi/commit/01fc39d0cb1df5c99f25d306594c60fc50cc0fb3))
+
 ## [0.4.0](https://github.com/hshn/yoshi/compare/v0.3.0...v0.4.0) (2026-09-09)
 
 
