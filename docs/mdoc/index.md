@@ -105,7 +105,7 @@ validation.run(invalid).left.map(_.toList)
 
 ## Automatic container derivation
 
-Define a validator for `A → B`, and validators for `Option[A]`, `List[A]`, `Map[String, A]` are derived automatically:
+Define a validator for `A → B`, and validators for `Option[A]`, `List[A]`, `Set[A]`, `Map[String, A]` are derived automatically:
 
 ```scala mdoc:compile-only
 import yoshi.*
@@ -117,8 +117,11 @@ import yoshi.defaults.*
 // These are derived for free:
 summon[Validation[Violation, Option[String], Option[Int]]]
 summon[Validation[Violation, List[String], List[Int]]]
+summon[Validation[Violation, Set[String], Set[Int]]]
 summon[Validation[Violation, Map[String, String], Map[String, Int]]]
 ```
+
+Any collection validates into a `Set[B]`, so a `List[String]` field can be validated straight into a `Set[Int]`. The index in a violation path follows the input's iteration order, so validate from an ordered collection where the path has to be stable.
 
 ## Required fields
 
