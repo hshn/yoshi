@@ -98,6 +98,29 @@ object ViolationsSpec extends ZIOSpecDefault {
       val v = Violations.empty[Int]
       assertTrue(v.map(_.toString) == Violations.empty[String])
     }
+    suiteAll("at") {
+      test("nests children under String and Int keys") {
+        val a = Violations.of("a")
+        val b = Violations.of("b")
+        assertTrue(
+          Violations.at("name" -> a, 0 -> b) == a.asChild("name") ++ b.asChild(0),
+        )
+      }
+      test("nests a child under a Path key") {
+        val a = Violations.of("a")
+        assertTrue(Violations.at(Path.Key("name") -> a) == a.asChild(Path.Key("name")))
+      }
+      test("merges entries that share a key") {
+        val x = Violations.of("x")
+        val y = Violations.of("y")
+        assertTrue(
+          Violations.at("k" -> x, "k" -> y) == x.asChild("k") ++ y.asChild("k"),
+        )
+      }
+      test("no entries yields empty") {
+        assertTrue(Violations.at[String]() == Violations.empty[String])
+      }
+    }
     suiteAll("toList") {
       test("empty Violations returns empty list") {
         assertTrue(Violations.empty[String].toList == Nil)
