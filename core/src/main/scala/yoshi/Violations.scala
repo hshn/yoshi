@@ -100,7 +100,7 @@ object Violations {
   /** Build a [[Violations]] whose children sit at the given keys.
     *
     * A `String` key nests under [[Path.Key]], an `Int` key under [[Path.Index]], and a [[Path]] is used as-is. Entries that share a key are
-    * merged with [[Violations.++]], so the result is exactly what chaining `asChild` and `++` produces:
+    * merged with [[Violations#++]], so the result is exactly what chaining `asChild` and `++` produces:
     *
     * {{{
     * Violations.at("name" -> x, "age" -> y, 0 -> z)
