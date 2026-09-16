@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/hshn/yoshi/compare/v0.5.0...v0.6.0) (2026-09-16)
+
+
+### Features
+
+* build a Violations tree from keyed children ([#217](https://github.com/hshn/yoshi/issues/217)) ([aeae979](https://github.com/hshn/yoshi/commit/aeae979830adf4f587d6d970adb644aeebab074a))
+
 ## [0.5.0](https://github.com/hshn/yoshi/compare/v0.4.0...v0.5.0) (2026-09-14)
 
 
