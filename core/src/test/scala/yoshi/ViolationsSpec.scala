@@ -2,10 +2,44 @@ package yoshi
 
 import yoshi.Violations.Path
 import yoshi.Violations.Paths
+import zio.test.Gen
 import zio.test.ZIOSpecDefault
 import zio.test.assertTrue
+import zio.test.check
 
 object ViolationsSpec extends ZIOSpecDefault {
+  // Keys are drawn from a small space so that duplicate keys occur regularly.
+  private val genKey: Gen[Any, Path | String | Int] =
+    Gen.oneOf(
+      Gen.elements("a", "b", "c"),
+      Gen.int(0, 2),
+      Gen.elements(Path.Key("a"), Path.Index(0)),
+    )
+
+  private def genViolations(depth: Int): Gen[Any, Violations[Int]] =
+    for
+      values   <- Gen.vectorOfBounded(0, 2)(Gen.int(0, 9))
+      children <-
+        if depth == 0 then Gen.const(Map.empty[Path, Violations[Int]])
+        else Gen.mapOfBounded(0, 2)(genKey.map(pathOf), genViolations(depth - 1))
+    yield Violations(values, children)
+
+  private val genEntries: Gen[Any, List[(Path | String | Int, Violations[Int])]] =
+    Gen.listOfBounded(0, 6)(genKey <*> genViolations(2))
+
+  private def pathOf(key: Path | String | Int): Path = key match
+    case path: Path  => path
+    case key: String => Path.Key(key)
+    case index: Int  => Path.Index(index)
+
+  // The oracle uses the existing asChild overloads, so it never touches the code under test.
+  private def viaAsChild(entries: List[(Path | String | Int, Violations[Int])]): Violations[Int] =
+    entries.foldLeft(Violations.empty[Int]) {
+      case (acc, (path: Path, child))  => acc ++ child.asChild(path)
+      case (acc, (key: String, child)) => acc ++ child.asChild(key)
+      case (acc, (index: Int, child))  => acc ++ child.asChild(index)
+    }
+
   override def spec = suiteAll("Violations") {
     test("++ merges two Violations recursively") {
       val a = Violations(
@@ -97,6 +131,45 @@ object ViolationsSpec extends ZIOSpecDefault {
     test("map on empty returns empty") {
       val v = Violations.empty[Int]
       assertTrue(v.map(_.toString) == Violations.empty[String])
+    }
+    suiteAll("children") {
+      test("nests children under String and Int keys") {
+        val a = Violations.of("a")
+        val b = Violations.of("b")
+        assertTrue(
+          Violations.children("name" -> a, 0 -> b) == a.asChild("name") ++ b.asChild(0),
+        )
+      }
+      test("nests a child under a Path key") {
+        val a = Violations.of("a")
+        assertTrue(Violations.children(Path.Key("name") -> a) == a.asChild(Path.Key("name")))
+      }
+      test("merges entries that share a key") {
+        val x = Violations.of("x")
+        val y = Violations.of("y")
+        assertTrue(
+          Violations.children("k" -> x, "k" -> y) == x.asChild("k") ++ y.asChild("k"),
+        )
+      }
+      test("no entries yields empty") {
+        assertTrue(Violations.children[String]() == Violations.empty[String])
+      }
+      test("equals the asChild ++ formulation for any keys and subtrees") {
+        check(genEntries) { entries =>
+          assertTrue(Violations.children(entries*) == viaAsChild(entries))
+        }
+      }
+      test("each child is the merge of every entry at its key, and nothing else") {
+        check(genEntries) { entries =>
+          val result = Violations.children(entries*)
+          val byPath = entries.groupMap { case (key, _) => pathOf(key) } { case (_, child) => child }
+          assertTrue(
+            result.values.isEmpty,
+            result.children.keySet == byPath.keySet,
+            byPath.forall { case (path, children) => result.children.get(path) == Some(children.reduce(_ ++ _)) },
+          )
+        }
+      }
     }
     suiteAll("toList") {
       test("empty Violations returns empty list") {

@@ -97,6 +97,27 @@ object Violations {
   /** An empty [[Violations]] with no violations. */
   def empty[V]: Violations[V] = _empty
 
+  /** Build a [[Violations]] from keyed children.
+    *
+    * A `String` key nests under [[Path.Key]], an `Int` key under [[Path.Index]], and a [[Path]] is used as-is. Entries that share a key are
+    * merged with [[Violations#++]], so the result is exactly what chaining `asChild` and `++` produces:
+    *
+    * {{{
+    * Violations.children("name" -> x, "age" -> y, 0 -> z)
+    * // equivalent to
+    * x.asChild("name") ++ y.asChild("age") ++ z.asChild(0)
+    * }}}
+    */
+  def children[V](entries: (Path | String | Int, Violations[V])*): Violations[V] =
+    entries.foldLeft(empty[V]) { case (acc, (key, child)) =>
+      acc ++ child.asChild(pathOf(key))
+    }
+
+  private def pathOf(key: Path | String | Int): Path = key match
+    case path: Path  => path
+    case key: String => Path.Key(key)
+    case index: Int  => Path.Index(index)
+
   /** A segment in a violation path, representing either a field key or a collection index. */
   enum Path:
     case Key(value: String)
