@@ -97,18 +97,18 @@ object Violations {
   /** An empty [[Violations]] with no violations. */
   def empty[V]: Violations[V] = _empty
 
-  /** Build a [[Violations]] whose children sit at the given keys.
+  /** Build a [[Violations]] from keyed children.
     *
     * A `String` key nests under [[Path.Key]], an `Int` key under [[Path.Index]], and a [[Path]] is used as-is. Entries that share a key are
     * merged with [[Violations#++]], so the result is exactly what chaining `asChild` and `++` produces:
     *
     * {{{
-    * Violations.at("name" -> x, "age" -> y, 0 -> z)
+    * Violations.children("name" -> x, "age" -> y, 0 -> z)
     * // equivalent to
     * x.asChild("name") ++ y.asChild("age") ++ z.asChild(0)
     * }}}
     */
-  def at[V](entries: (Path | String | Int, Violations[V])*): Violations[V] =
+  def children[V](entries: (Path | String | Int, Violations[V])*): Violations[V] =
     entries.foldLeft(empty[V]) { case (acc, (key, child)) =>
       acc ++ child.asChild(pathOf(key))
     }
