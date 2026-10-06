@@ -7,6 +7,11 @@ object ValidationChainingSpec extends ZIOSpecDefault {
 
   case class Member(name: String, age: Int)
 
+  given Validation[Violation, (String, Int), Member] =
+    Validation
+      .ensureOr[Violation, (String, Int)] { case (_, age) => Violation.TooSmall(age, 18) } { case (_, age) => age >= 18 }
+      .map(Member.apply.tupled)
+
   override def spec = suiteAll("Chaining on an already validated Either") {
     suiteAll("andValidateAs") {
       test("feeds the value into the next validation") {
@@ -36,8 +41,51 @@ object ValidationChainingSpec extends ZIOSpecDefault {
             Violations.of(Violation.NonIntegerString("abc")).asChild("age"),
         )
       }
+      test("feeds the combined value of a tuple into the next validation") {
+        for {
+          result <- (
+            Some("Bob").validateAs[String].at("name"),
+            Some("42").validateAs[Int].at("age"),
+          ).andValidateAs[Member]
+        } yield {
+          assertTrue(result == Member("Bob", 42))
+        }
+      }
+      test("accumulates the violations of every tuple element without running the next validation") {
+        assertTrue(
+          (
+            Option.empty[String].validateAs[String].at("name"),
+            Some("abc").validateAs[Int].at("age"),
+          ).andValidateAs[Member].is(_.left) ==
+            Violations.of(Violation.Required).asChild("name") ++
+            Violations.of(Violation.NonIntegerString("abc")).asChild("age"),
+        )
+      }
+      test("reports the violations of the next validation on the combined tuple value") {
+        assertTrue(
+          (
+            Some("Bob").validateAs[String].at("name"),
+            Some("15").validateAs[Int].at("age"),
+          ).andValidateAs[Member].is(_.left) ==
+            Violations.of(Violation.TooSmall(15, 18)),
+        )
+      }
+      test("leaves a tuple of unvalidated values to validateAs") {
+        assertTrue(("Bob", 42).validateAs[Member] == Right(Member("Bob", 42)))
+      }
     }
     suiteAll("validateWith") {
+      test("applies a function that validates a single validated value") {
+        assertTrue(
+          Some("15")
+            .validateAs[Int]
+            .validateWith { age =>
+              Left(Violations.of(Violation.TooSmall(age, 18)))
+            }
+            .is(_.left) ==
+            Violations.of(Violation.TooSmall(15, 18)),
+        )
+      }
       test("applies a function that validates the combined value") {
         for {
           result <- (
