@@ -30,6 +30,12 @@ object ValidationChainingSpec extends ZIOSpecDefault {
             Left(Violations.of(Violation.TooSmall(15, 18))),
         )
       }
+      test("accepts tuple elements typed as a Right or a Left") {
+        assertTrue(
+          (Right("Bob"), Right(42)).andValidateAs[Member] == Right(Member("Bob", 42)),
+          (Left(Violations.of(Violation.Required)), Right(42)).validateN(identity) == Left(Violations.of(Violation.Required)),
+        )
+      }
       test("keeps the first violations without running the next validation") {
         assertTrue(
           Option.empty[String].validateAs[String].andValidateAs[Int].is(_.left) ==
