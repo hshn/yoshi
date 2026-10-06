@@ -55,7 +55,7 @@ trait ValidateN:
       acc.accumulate(results).flatMap(va.run)
 
 /** Evidence that `T` — a single validation result or a tuple of them — accumulates into one result succeeding with `Out`. */
-sealed trait Accumulate[V, T, Out]:
+sealed trait Accumulate[V, -T, Out]:
   def accumulate(results: T): Either[Violations[V], Out]
 
 object Accumulate:

@@ -21,6 +21,15 @@ object ValidationChainingSpec extends ZIOSpecDefault {
           assertTrue(result == 42)
         }
       }
+      test("accepts a result typed as a Right or a Left") {
+        assertTrue(
+          Right("42").andValidateAs[Int] == Right(42),
+          Left(Violations.of(Violation.Required)).andValidateAs[Int] == Left(Violations.of(Violation.Required)),
+          Right(42).validateN(_ + 1) == Right(43),
+          Right(15).validateWith(age => Left(Violations.of(Violation.TooSmall(age, 18)))) ==
+            Left(Violations.of(Violation.TooSmall(15, 18))),
+        )
+      }
       test("keeps the first violations without running the next validation") {
         assertTrue(
           Option.empty[String].validateAs[String].andValidateAs[Int].is(_.left) ==
