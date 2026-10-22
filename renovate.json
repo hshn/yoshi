@@ -3,6 +3,10 @@
   "extends": [
     "config:recommended"
   ],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true
+  },
   "packageRules": [
     {
       "matchUpdateTypes": ["patch"],
@@ -25,6 +29,11 @@
         "dev.zio:zio-test-magnolia"
       ],
       "groupName": "zio"
+    },
+    {
+      "matchDatasources": ["npm"],
+      "minimumReleaseAge": "7 days",
+      "description": "Match minimumReleaseAge in pnpm-workspace.yaml so pnpm can resolve the proposed version"
     },
     {
       "matchManagers": ["devbox"],
