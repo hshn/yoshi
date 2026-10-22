@@ -136,6 +136,27 @@ bounds.run(BoundsInput("x", "3")).left.map(_.toList)
 bounds.run(BoundsInput("10", "3")).left.map(_.toList)
 ```
 
+The root is the right place when the input nests the fields under a key of their own, as in `c.validateAs[Bounds](_.bounds)`. When
+the input is flat while the domain groups the values, a form usually shows the violation beside one of the inputs instead. Where it
+goes is a fact about the input's shape, not about the rule, so pass the path to `andValidateAs` and let the cursor derive it:
+
+```scala mdoc:silent
+val boundsBesideUpper: Validation[Violation, BoundsInput, Bounds] =
+  Validation.cursor[BoundsInput] { c =>
+    (
+      c.validateAs[Int](_.lower),
+      c.validateAs[Int](_.upper),
+    ).andValidateAs[Bounds](c.path(_.upper))
+  }
+```
+
+Only the rule's violation moves; each field's own stays at its path. `.at(...)` after the chain would move both:
+
+```scala mdoc
+boundsBesideUpper.run(BoundsInput("x", "3")).left.map(_.toList)
+boundsBesideUpper.run(BoundsInput("10", "3")).left.map(_.toList)
+```
+
 `validateN`, `validateWith` and `andValidateAs` take a single result and a tuple of them alike, so a validation keeps compiling as
 its fields come and go.
 
