@@ -183,6 +183,19 @@ object Validation extends ValidationInstances {
   def fail[V](v: V): Validation[V, Any, Nothing] =
     instance[Any](_ => Left(Violations.of(v)))
 
+  /** Create a [[Validation]] from a function that fails with a single violation, such as a smart constructor.
+    *
+    * {{{
+    * object Period:
+    *   def from(since: Instant, until: Instant): Either[PeriodError, Period] = ???
+    *
+    * given Validation[PeriodError, (Instant, Instant), Period] =
+    *   Validation.fromEither(Period.from.tupled)
+    * }}}
+    */
+  def fromEither[V, A, B](f: A => Either[V, B]): Validation[V, A, B] =
+    instance[A](a => f(a).left.map(Violations.of(_)))
+
   /** Validate that a predicate holds, failing with a constant violation if it does not.
     *
     * {{{
