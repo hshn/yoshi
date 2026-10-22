@@ -12,6 +12,8 @@ object ValidationChainingSpec extends ZIOSpecDefault {
       .ensureOr[Violation, (String, Int)] { case (_, age) => Violation.TooSmall(age, 18) } { case (_, age) => age >= 18 }
       .map(Member.apply.tupled)
 
+  val agePath: Violations.Paths = Violations.Paths(List(Violations.Path.Key("age")))
+
   override def spec = suiteAll("Chaining on an already validated Either") {
     suiteAll("andValidateAs") {
       test("feeds the value into the next validation") {
@@ -83,6 +85,45 @@ object ValidationChainingSpec extends ZIOSpecDefault {
             Some("15").validateAs[Int].at("age"),
           ).andValidateAs[Member].is(_.left) ==
             Violations.of(Violation.TooSmall(15, 18)),
+        )
+      }
+      test("feeds the combined value into the next validation when given a path") {
+        assertTrue((Right("Bob"), Right(42)).andValidateAs[Member](agePath) == Right(Member("Bob", 42)))
+      }
+      test("puts the next validation's violations at the given path") {
+        assertTrue(
+          (
+            Some("Bob").validateAs[String].at("name"),
+            Some("15").validateAs[Int].at("age"),
+          ).andValidateAs[Member](agePath).is(_.left) ==
+            Violations.of(Violation.TooSmall(15, 18)).asChild("age"),
+        )
+      }
+      test("leaves the elements' own violations at their own paths when given a path") {
+        assertTrue(
+          (
+            Option.empty[String].validateAs[String].at("name"),
+            Some("abc").validateAs[Int].at("member"),
+          ).andValidateAs[Member](agePath).is(_.left) ==
+            Violations.of(Violation.Required).asChild("name") ++
+            Violations.of(Violation.NonIntegerString("abc")).asChild("member"),
+        )
+      }
+      test("puts a single result's next violations at the given path") {
+        assertTrue(
+          Some("abc").validateAs[String].andValidateAs[Int](agePath).is(_.left) ==
+            Violations.of(Violation.NonIntegerString("abc")).asChild("age"),
+          Option.empty[String].validateAs[String].andValidateAs[Int](agePath).is(_.left) ==
+            Violations.of(Violation.Required),
+        )
+      }
+      test("nests the given path under one attached after the chain") {
+        assertTrue(
+          (
+            Some("Bob").validateAs[String].at("name"),
+            Some("15").validateAs[Int].at("age"),
+          ).andValidateAs[Member](agePath).at("member").is(_.left) ==
+            Violations.of(Violation.TooSmall(15, 18)).asChild("age").asChild("member"),
         )
       }
       test("leaves a tuple of unvalidated values to validateAs") {
