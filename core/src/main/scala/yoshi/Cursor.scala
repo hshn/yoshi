@@ -52,6 +52,20 @@ final class ValidationCursor[A](private val underlying: A):
     */
   inline def validateAs[B] = new CursorValidateAs[A, B](underlying)
 
+  /** Derive the path of a field from the accessor at compile time, the same way [[field]] does, without reading the value.
+    *
+    * Use it to place a violation that no single field owns beside one of the inputs:
+    *
+    * {{{
+    * (
+    *   c.validateAs[Instant](_.since),
+    *   c.validateAs[Instant](_.until),
+    * ).andValidateAs[Period](c.path(_.until))
+    * }}}
+    */
+  inline def path[B](inline f: A => B): Paths =
+    Paths(fieldNames(f).map(Path.Key(_)))
+
 /** Intermediate class for `cursor.validateAs[B](_.field)`.
   *
   * Not intended for direct use; obtained via [[ValidationCursor.validateAs]].

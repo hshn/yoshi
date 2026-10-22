@@ -54,6 +54,25 @@ trait ValidateN:
     def andValidateAs[B](using va: ValidatedAs[Out, B]): Either[Violations[V | va.Err], B] =
       acc.accumulate(results).flatMap(va.run)
 
+    /** Continue validating like `andValidateAs[B]`, placing only the next validation's violations at `paths`.
+      *
+      * A rule across fields reports at the root of the combination, since no single field owns it. Where the input is flat while the domain
+      * groups the values, a form shows that violation beside one of the inputs instead. That placement is a fact about the input's shape,
+      * so it is chosen here rather than in the rule's [[yoshi.Validation]]. `at` after the chain would also move the fields' own
+      * violations; this leaves them where they are.
+      *
+      * {{{
+      * Validation.cursor[EventInput] { c =>
+      *   (
+      *     c.validateAs[Instant](_.since),
+      *     c.validateAs[Instant](_.until),
+      *   ).andValidateAs[Period](c.path(_.until))
+      * }
+      * }}}
+      */
+    def andValidateAs[B](paths: Violations.Paths)(using va: ValidatedAs[Out, B]): Either[Violations[V | va.Err], B] =
+      acc.accumulate(results).flatMap(out => va.run(out).left.map(_.asChild(paths)))
+
 /** Evidence that `T` — a single validation result or a tuple of them — accumulates into one result succeeding with `Out`. */
 sealed trait Accumulate[V, -T, Out]:
   def accumulate(results: T): Either[Violations[V], Out]
