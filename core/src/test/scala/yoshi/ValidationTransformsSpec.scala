@@ -4,6 +4,13 @@ import yoshi.defaults.*
 import zio.test.*
 
 object ValidationTransformsSpec extends ZIOSpecDefault {
+
+  case class Bounds(lower: Int, upper: Int)
+
+  def boundsFrom(lower: Int, upper: Int): Either[Violation, Bounds] =
+    if (lower <= upper) Right(Bounds(lower, upper))
+    else Left(Violation.TooSmall(upper, lower))
+
   override def spec = suiteAll("Validation transforms") {
     suiteAll("succeed") {
       test("returns the input unchanged") {
@@ -34,6 +41,16 @@ object ValidationTransformsSpec extends ZIOSpecDefault {
       test("always fails with the given violation") {
         val v = Validation.fail[Violation](Violation.Required)
         assertTrue(v.run("anything").is(_.left) == Violations.of[Violation](Violation.Required))
+      }
+    }
+    suiteAll("fromEither") {
+      test("succeeds with the value the function returns") {
+        val validation = Validation.fromEither(boundsFrom.tupled)
+        assertTrue(validation.run((1, 3)) == Right(Bounds(1, 3)))
+      }
+      test("fails with the single violation the function returns") {
+        val validation = Validation.fromEither(boundsFrom.tupled)
+        assertTrue(validation.run((10, 3)) == Left(Violations.of(Violation.TooSmall(3, 10))))
       }
     }
     suiteAll("contramap") {
