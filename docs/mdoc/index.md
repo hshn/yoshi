@@ -105,19 +105,19 @@ validation.run(invalid).left.map(_.toList)
 
 ## Rules across fields
 
-A rule that no single field can decide — an upper bound that must not fall below its lower bound — belongs to the type it protects.
-Write it as a `Validation` from the validated fields, and continue the tuple into it with `andValidateAs`:
+A rule that no single field can decide — an upper bound that must not fall below its lower bound — belongs to the type it protects,
+usually as a smart constructor. Lift it with `fromEither` into a `Validation` from the validated fields, and continue the tuple into
+it with `andValidateAs`:
 
 ```scala mdoc:silent
 case class BoundsInput(lower: String, upper: String)
 case class Bounds(lower: Int, upper: Int)
+object Bounds:
+  def from(lower: Int, upper: Int): Either[Violation, Bounds] =
+    if lower <= upper then Right(Bounds(lower, upper))
+    else Left(Violation.TooSmall(upper, lower))
 
-given Validation[Violation, (Int, Int), Bounds] =
-  Validation
-    .ensureOr[Violation, (Int, Int)] { case (lower, upper) => Violation.TooSmall(upper, lower) } { case (lower, upper) =>
-      lower <= upper
-    }
-    .map(Bounds.apply.tupled)
+given Validation[Violation, (Int, Int), Bounds] = Validation.fromEither(Bounds.from.tupled)
 
 val bounds: Validation[Violation, BoundsInput, Bounds] =
   Validation.cursor[BoundsInput] { c =>
