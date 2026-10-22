@@ -167,6 +167,55 @@ object CursorSpec extends ZIOSpecDefault {
         assertTrue(fieldResult == shorthandResult)
       }
     }
+    suiteAll("path") {
+      test("derives the same path as field") {
+        val derived: Validation[Nothing, Input, List[Violations.Paths]] =
+          Validation.cursor[Input] { c =>
+            Right(List(c.path(_.age), c.path(_.address.zip)))
+          }
+
+        val fromField: Validation[Nothing, Input, List[Violations.Paths]] =
+          Validation.cursor[Input] { c =>
+            Right(List(c.field(_.age).path, c.field(_.address.zip).path))
+          }
+
+        val input = Input(name = None, age = "", items = Nil, address = Input.Address(None))
+
+        assertTrue(
+          derived.run(input) == fromField.run(input),
+          derived.run(input) == Right(
+            List(
+              Violations.Paths(List(Violations.Path.Key("age"))),
+              Violations.Paths(List(Violations.Path.Key("address"), Violations.Path.Key("zip"))),
+            ),
+          ),
+        )
+      }
+
+      test("places a rule's violation at a field while the fields keep their own") {
+        given Validation[Violation, (Int, Int), CursorSpec.Period] =
+          Validation
+            .ensureOr[Violation, (Int, Int)] { case (since, until) => Violation.TooSmall(until, since) } { case (since, until) =>
+              since <= until
+            }
+            .map(CursorSpec.Period.apply.tupled)
+
+        val validation: Validation[Violation, CursorSpec.PeriodInput, CursorSpec.Period] =
+          Validation.cursor[CursorSpec.PeriodInput] { c =>
+            (
+              c.validateAs[Int](_.since),
+              c.validateAs[Int](_.until),
+            ).andValidateAs[CursorSpec.Period](c.path(_.until))
+          }
+
+        assertTrue(
+          validation.run(CursorSpec.PeriodInput(since = "x", until = "3")).is(_.left) ==
+            Violations.of(Violation.NonIntegerString("x")).asChild("since"),
+          validation.run(CursorSpec.PeriodInput(since = "10", until = "3")).is(_.left) ==
+            Violations.of(Violation.TooSmall(3, 10)).asChild("until"),
+        )
+      }
+    }
     suiteAll("field carried through unchanged") {
       test("combines with a field that is validated") {
         val validation: Validation[Violation, CursorSpec.Passthrough, CursorSpec.Parsed] =
@@ -190,4 +239,6 @@ object CursorSpec extends ZIOSpecDefault {
 
   case class Passthrough(id: String, age: String)
   case class Parsed(id: String, age: Int)
+  case class PeriodInput(since: String, until: String)
+  case class Period(since: Int, until: Int)
 }
