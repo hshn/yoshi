@@ -103,6 +103,42 @@ val invalid = FormInput(
 validation.run(invalid).left.map(_.toList)
 ```
 
+## Rules across fields
+
+A rule that no single field can decide — an upper bound that must not fall below its lower bound — belongs to the type it protects.
+Write it as a `Validation` from the validated fields, and continue the tuple into it with `andValidateAs`:
+
+```scala mdoc:silent
+case class BoundsInput(lower: String, upper: String)
+case class Bounds(lower: Int, upper: Int)
+
+given Validation[Violation, (Int, Int), Bounds] =
+  Validation
+    .ensureOr[Violation, (Int, Int)] { case (lower, upper) => Violation.TooSmall(upper, lower) } { case (lower, upper) =>
+      lower <= upper
+    }
+    .map(Bounds.apply.tupled)
+
+val bounds: Validation[Violation, BoundsInput, Bounds] =
+  Validation.cursor[BoundsInput] { c =>
+    (
+      c.validateAs[Int](_.lower),
+      c.validateAs[Int](_.upper),
+    ).andValidateAs[Bounds]
+  }
+```
+
+The rule runs only once every field has validated, so a field that fails on its own is not reported twice. Since no single field owns
+the rule, its violation sits at the path of the combination — here, the root:
+
+```scala mdoc
+bounds.run(BoundsInput("x", "3")).left.map(_.toList)
+bounds.run(BoundsInput("10", "3")).left.map(_.toList)
+```
+
+`validateN`, `validateWith` and `andValidateAs` take a single result and a tuple of them alike, so a validation keeps compiling as
+its fields come and go.
+
 ## Automatic container derivation
 
 Define a validator for `A → B`, and validators for `Option[A]`, `List[A]`, `Set[A]`, `Map[String, A]` are derived automatically:

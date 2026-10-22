@@ -2,7 +2,10 @@ package yoshi.syntax
 
 import yoshi.Violations
 
-/** Provides `.validateN(f)` for error-accumulating validation of multiple `Either` values.
+/** Provides the steps that continue from validation results: `.validateN(f)`, `.validateWith(f)` and `.andValidateAs[B]`.
+  *
+  * Each step takes either a single `Either` or a tuple of them under the same name, so code keeps compiling as fields are added or removed.
+  * A tuple first accumulates the violations of every element; the step runs only once all of them succeed.
   *
   * {{{
   * (
@@ -12,15 +15,11 @@ import yoshi.Violations
   * }}}
   */
 trait ValidateN:
-  extension [V, A](validation: Either[Violations[V], A])
-    def validateN[B](f: A => B): Either[Violations[V], B] =
-      validation.map(f)
-
-  extension [V, T <: Tuple, Out <: Tuple](validations: T)(using tv: ValidateTuple[V, T, Out])
+  extension [V, T, Out](results: T)(using acc: Accumulate[V, T, Out])
     def validateN[A](f: Out => A): Either[Violations[V], A] =
-      tv.validate(validations).map(f)
+      acc.accumulate(results).map(f)
 
-    /** Accumulate the violations of every element, then build the result with a function that can fail in turn.
+    /** Build the result with a function that can fail in turn.
       *
       * Violations reported by `f` describe the combination itself — a rule that no single element can decide.
       *
@@ -35,7 +34,38 @@ trait ValidateN:
       * }}}
       */
     def validateWith[A](f: Out => Either[Violations[V], A]): Either[Violations[V], A] =
-      tv.validate(validations).flatMap(f)
+      acc.accumulate(results).flatMap(f)
+
+    /** Continue validating the already validated value, short-circuiting on the violations already collected.
+      *
+      * `at` maps violations that are already there, so it belongs after the chain to cover both steps. On a tuple, the next validation
+      * receives the tuple of validated values, which lets a rule across several fields live in a [[yoshi.Validation]] of its own.
+      *
+      * {{{
+      * input.id.validateAs[String].andValidateAs[UserId].at("id")
+      *
+      * given Validation[Violation, (Date, Date), Period] = ???
+      * (
+      *   input.start.validateAs[Date].at("start"),
+      *   input.end.validateAs[Date].at("end"),
+      * ).andValidateAs[Period]
+      * }}}
+      */
+    def andValidateAs[B](using va: ValidatedAs[Out, B]): Either[Violations[V | va.Err], B] =
+      acc.accumulate(results).flatMap(va.run)
+
+/** Evidence that `T` — a single validation result or a tuple of them — accumulates into one result succeeding with `Out`. */
+sealed trait Accumulate[V, -T, Out]:
+  def accumulate(results: T): Either[Violations[V], Out]
+
+object Accumulate:
+  given single[V, A]: Accumulate[V, Either[Violations[V], A], A] with
+    def accumulate(result: Either[Violations[V], A]): Either[Violations[V], A] =
+      result
+
+  given tuple[V, T <: Tuple, Out <: Tuple](using tv: ValidateTuple[V, T, Out]): Accumulate[V, T, Out] with
+    def accumulate(results: T): Either[Violations[V], Out] =
+      tv.validate(results)
 
 sealed trait ValidateTuple[V, T <: Tuple, Out <: Tuple]:
   def validate(t: T): Either[Violations[V], Out]
