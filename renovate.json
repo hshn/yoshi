@@ -31,6 +31,11 @@
       "groupName": "zio"
     },
     {
+      "matchDatasources": ["npm"],
+      "minimumReleaseAge": "7 days",
+      "description": "Match minimumReleaseAge in pnpm-workspace.yaml so pnpm can resolve the proposed version"
+    },
+    {
       "matchManagers": ["devbox"],
       "matchPackageNames": ["sbt"],
       "enabled": false
