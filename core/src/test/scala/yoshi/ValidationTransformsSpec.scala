@@ -11,6 +11,8 @@ object ValidationTransformsSpec extends ZIOSpecDefault {
     if (lower <= upper) Right(Bounds(lower, upper))
     else Left(Violation.TooSmall(upper, lower))
 
+  extension [T](value: T) def hasExactType[U](using T =:= U): Boolean = true
+
   override def spec = suiteAll("Validation transforms") {
     suiteAll("succeed") {
       test("returns the input unchanged") {
@@ -44,6 +46,10 @@ object ValidationTransformsSpec extends ZIOSpecDefault {
       }
     }
     suiteAll("fromEither") {
+      test("infers every type from the function alone") {
+        val validation = Validation.fromEither(boundsFrom.tupled)
+        assertTrue(validation.hasExactType[Validation[Violation, (Int, Int), Bounds]])
+      }
       test("succeeds with the value the function returns") {
         val validation = Validation.fromEither(boundsFrom.tupled)
         assertTrue(validation.run((1, 3)) == Right(Bounds(1, 3)))
