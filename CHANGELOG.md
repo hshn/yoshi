@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.6.0](https://github.com/hshn/yoshi/compare/v0.5.0...v0.6.0) (2026-10-22)
+
+
+### Features
+
+* build a Violations tree from keyed children ([#217](https://github.com/hshn/yoshi/issues/217)) ([aeae979](https://github.com/hshn/yoshi/commit/aeae979830adf4f587d6d970adb644aeebab074a))
+* give a single result and a tuple the same continuation steps ([#225](https://github.com/hshn/yoshi/issues/225)) ([ff506fd](https://github.com/hshn/yoshi/commit/ff506fdcdb248181077861caa55c9b2db93f14e4))
+* lift a smart constructor returning Either into a Validation ([#236](https://github.com/hshn/yoshi/issues/236)) ([661594a](https://github.com/hshn/yoshi/commit/661594a655d77a398dbaeef7dc5a37534bbbc4c7))
+* place a cross-field rule's violation beside an input ([#237](https://github.com/hshn/yoshi/issues/237)) ([48ea40f](https://github.com/hshn/yoshi/commit/48ea40fffd6bb41ce4a2110b01fe9e10f94abfc4))
+
 ## [0.5.0](https://github.com/hshn/yoshi/compare/v0.4.0...v0.5.0) (2026-09-14)
 
 
