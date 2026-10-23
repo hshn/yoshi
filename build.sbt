@@ -20,7 +20,7 @@ ThisBuild / scalacOptions := Seq(
 
 ThisBuild / testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
 
-val zioVersion = "2.1.26"
+val zioVersion = "2.1.27"
 val catsCore   = "2.13.0"
 
 lazy val root = (project in file(".")).withId("yoshi")
