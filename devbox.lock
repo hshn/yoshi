@@ -2,45 +2,45 @@
   "lockfile_version": "1",
   "packages": {
     "github:NixOS/nixpkgs/nixpkgs-unstable": {
-      "last_modified": "2026-11-06T15:06:19Z",
-      "resolved": "github:NixOS/nixpkgs/4fe25e12eb9f4c744966dd3de5a05246cf098601?lastModified=1793977579&narHash=sha256-WrSODdZFVIs%2FHh2NzC0bY%2BROByi0bATg8WfePX8dPj8%3D"
+      "last_modified": "2026-11-14T08:26:23Z",
+      "resolved": "github:NixOS/nixpkgs/5d2b81a7a3be3e2f832879028e4d60abbf58e9a0?lastModified=1794644783&narHash=sha256-3GnIGIy15bMduoS9RnWqKTmsJLWThla42UFtm0S7%2Bus%3D"
     },
     "nodejs@24": {
-      "last_modified": "2026-11-06T15:06:19Z",
-      "plugin_version": "0.0.5",
-      "resolved": "github:NixOS/nixpkgs/4fe25e12eb9f4c744966dd3de5a05246cf098601#nodejs",
+      "last_modified": "2026-11-13T07:26:56Z",
+      "plugin_version": "0.0.6",
+      "resolved": "github:NixOS/nixpkgs/e126e9e73c335158ff8279ac14d5f4afec153716#nodejs",
       "source": "devbox-search",
-      "version": "24.21.0",
+      "version": "24.22.2",
       "systems": {
         "aarch64-darwin": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/i376rizbw75rswsg2qlk47wj4zz3biqq-nodejs-24.21.0",
+              "path": "/nix/store/vxh4ylwcdwyqhils1q6084ih7l5qinwk-nodejs-24.22.2",
               "default": true
             }
           ],
-          "store_path": "/nix/store/i376rizbw75rswsg2qlk47wj4zz3biqq-nodejs-24.21.0"
+          "store_path": "/nix/store/vxh4ylwcdwyqhils1q6084ih7l5qinwk-nodejs-24.22.2"
         },
         "aarch64-linux": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/6vlx51wp6rjcsb1gcx54hfb7ndf3k2h8-nodejs-24.21.0",
+              "path": "/nix/store/pl77fywj3l09rzgsssy5drc52lpk9n0d-nodejs-24.22.2",
               "default": true
             }
           ],
-          "store_path": "/nix/store/6vlx51wp6rjcsb1gcx54hfb7ndf3k2h8-nodejs-24.21.0"
+          "store_path": "/nix/store/pl77fywj3l09rzgsssy5drc52lpk9n0d-nodejs-24.22.2"
         },
         "x86_64-linux": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/j1j9b0w3mhpccdli73ycj5w7nf6fkzqz-nodejs-24.21.0",
+              "path": "/nix/store/3kfmdqn711fqcc2y1qnjssancqf7b36l-nodejs-24.22.2",
               "default": true
             }
           ],
-          "store_path": "/nix/store/j1j9b0w3mhpccdli73ycj5w7nf6fkzqz-nodejs-24.21.0"
+          "store_path": "/nix/store/3kfmdqn711fqcc2y1qnjssancqf7b36l-nodejs-24.22.2"
         }
       }
     },
@@ -131,8 +131,8 @@
       }
     },
     "temurin-bin-25@25.0.4": {
-      "last_modified": "2026-11-06T15:06:19Z",
-      "resolved": "github:NixOS/nixpkgs/4fe25e12eb9f4c744966dd3de5a05246cf098601#temurin-bin-25",
+      "last_modified": "2026-11-13T07:26:56Z",
+      "resolved": "github:NixOS/nixpkgs/e126e9e73c335158ff8279ac14d5f4afec153716#temurin-bin-25",
       "source": "devbox-search",
       "version": "25.0.4",
       "systems": {
@@ -140,31 +140,31 @@
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/zcxkcnzhhpl9lwachfb7731kzb02858l-temurin-bin-25.0.4",
+              "path": "/nix/store/3v5vyawwnn1s0bh8162skqcjdhspkcak-temurin-bin-25.0.4",
               "default": true
             }
           ],
-          "store_path": "/nix/store/zcxkcnzhhpl9lwachfb7731kzb02858l-temurin-bin-25.0.4"
+          "store_path": "/nix/store/3v5vyawwnn1s0bh8162skqcjdhspkcak-temurin-bin-25.0.4"
         },
         "aarch64-linux": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/wbn4ghi1fqyfgv6ykancn03px833pc2q-temurin-bin-25.0.4",
+              "path": "/nix/store/nx8nm0lrmapn22q1cnplvmjh0vr3d4d3-temurin-bin-25.0.4",
               "default": true
             }
           ],
-          "store_path": "/nix/store/wbn4ghi1fqyfgv6ykancn03px833pc2q-temurin-bin-25.0.4"
+          "store_path": "/nix/store/nx8nm0lrmapn22q1cnplvmjh0vr3d4d3-temurin-bin-25.0.4"
         },
         "x86_64-linux": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/cliq98xv7wz7fjvznqil3z82mnbr0azk-temurin-bin-25.0.4",
+              "path": "/nix/store/g89yrpcphfjc0q00cirikd6pmqxlrvvk-temurin-bin-25.0.4",
               "default": true
             }
           ],
-          "store_path": "/nix/store/cliq98xv7wz7fjvznqil3z82mnbr0azk-temurin-bin-25.0.4"
+          "store_path": "/nix/store/g89yrpcphfjc0q00cirikd6pmqxlrvvk-temurin-bin-25.0.4"
         }
       }
     }
