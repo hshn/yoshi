@@ -13,7 +13,7 @@ jobs:
       - uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: "25.0.5+8.0.LTS"
+          java-version: "25.0.5+100000002.0.LTS"
           cache: sbt
       - uses: sbt/setup-sbt@v1
       - run: sbt scalafmtCheckAll
@@ -23,7 +23,7 @@ jobs:
     strategy:
       matrix:
         java: ["17", "21", "25"]
-        scala: ["3.3.7", "3.8.2"]
+        scala: ["default", "3.8.2"]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v6
@@ -32,7 +32,10 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: sbt
       - uses: sbt/setup-sbt@v1
-      - run: sbt "++${{ matrix.scala }}!" test
+      - if: matrix.scala == 'default'
+        run: sbt test
+      - if: matrix.scala != 'default'
+        run: sbt "++${{ matrix.scala }}!" test
 
   test-all:
     if: always()

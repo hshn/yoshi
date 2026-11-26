@@ -54,7 +54,7 @@ lazy val `zio-prelude` = (project in file("zio-prelude")).withId("yoshi-zio-prel
   .settings(
     name := "yoshi-zio-prelude",
     libraryDependencies ++= Seq(
-      "dev.zio" %% "zio-prelude" % "1.0.0-RC48",
+      "dev.zio" %% "zio-prelude" % "1.0.0-RC49",
     ),
   )
 
